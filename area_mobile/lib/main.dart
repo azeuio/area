@@ -1,7 +1,6 @@
-import 'package:area_mobile/widgets/generic_text_field.dart';
+import 'package:area_mobile/widgets/service_card.dart';
 import 'package:flutter/material.dart';
 import 'package:area_mobile/area_theme.dart';
-import 'package:area_mobile/widgets/generic_button.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,14 +29,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,36 +42,26 @@ class _MyHomePageState extends State<MyHomePage> {
                 'You have pushed the button this many times:',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
-              Text(
-                '$_counter',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              CustomTextField(
-                outlineColor: const Color(0xFFD9D9D9),
-                hintText: "email",
-                hintTextColor: const Color(0xFF8E8E93),
-                controller: TextEditingController(),
-                obscureText: false,
-              ),
-              CustomTextField(
-                outlineColor: const Color(0xFFD9D9D9),
-                hintText: "password",
-                hintTextColor: const Color(0xFF8E8E93),
-                controller: TextEditingController(),
-                obscureText: true,
-              ),
-              CustomButton(
-                color: const Color(0xFF2EBD59),
-                text: 'Increment',
-                textColor: Colors.black,
-                icon: Icons.add,
-                onPressed: _incrementCounter,
-              ),
-              CustomButton(
-                color: const Color(0xFF2EBD59),
-                text: "Increment",
-                textColor: Colors.black,
-                onPressed: _incrementCounter,
+              const Text("0"),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const ServiceCard(
+                    color: Color(0xFF2EBD59),
+                    name: 'Spotify',
+                    logoPath: "assets/spotify_logo.png",
+                    colored: false,
+                  ),
+                  ServiceCard(
+                    color: const Color(0xFF2EBD59),
+                    name: 'Spotify',
+                    logoPath: "assets/spotify_logo.png",
+                    colored: true,
+                    onPressed: () {
+                      print('Colored card pressed!');
+                    },
+                  ),
+                ],
               ),
             ],
           ),
