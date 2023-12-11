@@ -1,6 +1,9 @@
-import 'package:area_mobile/widgets/service_card.dart';
 import 'package:flutter/material.dart';
+import 'package:area_mobile/widgets/bottom_nav_bar.dart';
 import 'package:area_mobile/area_theme.dart';
+import 'package:area_mobile/views/boards_view.dart';
+import 'package:area_mobile/views/areas_view.dart';
+import 'package:area_mobile/views/profile_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,44 +32,30 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int _selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
+    const List<Widget> _pages = <Widget>[
+      BoardsPage(),
+      AreasPage(),
+      ProfilePage(),
+    ];
+
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(38),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Text(
-                'You have pushed the button this many times:',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const Text("0"),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const ServiceCard(
-                    color: Color(0xFF2EBD59),
-                    name: 'Spotify',
-                    logoPath: "assets/spotify_logo.png",
-                    colored: false,
-                  ),
-                  ServiceCard(
-                    color: const Color(0xFF2EBD59),
-                    name: 'Spotify',
-                    logoPath: "assets/spotify_logo.png",
-                    colored: true,
-                    onPressed: () {
-                      print('Colored card pressed!');
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        onItemTapped: _onItemTapped,
+        selectedItem: _selectedIndex,
+      ),
+      body: Center(
+        child: _pages.elementAt(_selectedIndex),
       ),
     );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 }
