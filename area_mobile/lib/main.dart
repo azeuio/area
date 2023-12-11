@@ -1,6 +1,7 @@
+import 'package:area_mobile/widgets/generic_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:area_mobile/area_theme.dart';
-import 'widgets/generic_button.dart';
+import 'package:area_mobile/widgets/generic_button.dart';
 
 void main() {
   runApp(const MyApp());
@@ -54,6 +55,20 @@ class _MyHomePageState extends State<MyHomePage> {
                 '$_counter',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
+              CustomTextField(
+                outlineColor: const Color(0xFFD9D9D9),
+                hintText: "email",
+                hintTextColor: const Color(0xFF8E8E93),
+                controller: TextEditingController(),
+                obscureText: false,
+              ),
+              CustomTextField(
+                outlineColor: const Color(0xFFD9D9D9),
+                hintText: "password",
+                hintTextColor: const Color(0xFF8E8E93),
+                controller: TextEditingController(),
+                obscureText: true,
+              ),
               CustomButton(
                 color: const Color(0xFF2EBD59),
                 text: 'Increment',
@@ -66,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 text: "Increment",
                 textColor: Colors.black,
                 onPressed: _incrementCounter,
-              )
+              ),
             ],
           ),
         ),
