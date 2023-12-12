@@ -14,6 +14,7 @@ export class DatabaseService implements OnModuleInit {
   public readonly usersRefId = 'users';
   public readonly servicesRefId = 'services';
   public readonly actionsRefId = 'actions';
+  public readonly boardsRefId = 'boards';
 
   onModuleInit() {
     this.app = admin.initializeApp({
@@ -54,7 +55,7 @@ export class DatabaseService implements OnModuleInit {
   }
 
   async pushData<T>(path: string, data: T, onComplete?: (a: Error) => void) {
-    await this.db.ref(path).push(data, onComplete);
+    return await this.db.ref(path).push(data, onComplete);
   }
 
   async removeData(path: string, onComplete?: (a: Error) => void) {

@@ -1,10 +1,25 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 import { DatabaseService } from '../database/database.service';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
   constructor(private readonly database: DatabaseService) {}
+
+  async getUidFromRequest(req: Request) {
+    const token = req.headers.authorization.split('Bearer ')[1];
+    return await this.getUidFromToken(token);
+  }
+
+  async getUidFromToken(token: string) {
+    try {
+      const decodedToken = await this.database.getAuth().verifyIdToken(token);
+      return decodedToken.uid;
+    } catch (e) {
+      throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+    }
+  }
 
   async genereteEmailVerificationLink(uid: string) {
     const user = await this.database.getAuth().getUser(uid);

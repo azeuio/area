@@ -1,12 +1,12 @@
 {
   "rules": {
-    ".read": "now < 1703804400000",  // 2023-12-29
-    ".write": "now < 1703804400000",  // 2023-12-29
+    ".read": "now < 1703804400000", // 2023-12-29
+    ".write": "now < 1703804400000", // 2023-12-29
     "actions": {
       ".indexOn": ["service_id", "name"]
     },
-    "whiteboards": {
+    "boards": {
       ".indexOn": ["owner_id", "name"]
-    },
+    }
   }
 }
