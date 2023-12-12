@@ -12,6 +12,7 @@ async function bootstrap() {
     .setDescription('The NestJS API for the AREA project')
     .setVersion('1.0')
     .addTag('AREA API')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
