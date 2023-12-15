@@ -55,7 +55,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('create-user')
-  @UseGuards(AuthGuardVerifiedEmail)
+  @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @ApiResponse({
     status: 200,
