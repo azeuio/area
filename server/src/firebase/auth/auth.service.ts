@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 import { DatabaseService } from '../database/database.service';
 import { Request } from 'express';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -32,11 +33,19 @@ export class AuthService {
     const user = await this.database
       .getAuth()
       .createUser({ email, password } as admin.auth.CreateRequest);
-    await this.database.setData(`users/${user.uid}`, {
+    await this.database.setData(`${this.database.usersRefId}/${user.uid}`, {
       email,
       username: email,
     });
     return user;
+  }
+
+  async createUser(uid: string, body: CreateUserDto) {
+    const user = await this.database.getAuth().getUser(uid);
+    await this.database.setData(`${this.database.usersRefId}/${uid}`, {
+      email: user.email,
+      username: body.username,
+    });
   }
 
   async unregister(token: string) {

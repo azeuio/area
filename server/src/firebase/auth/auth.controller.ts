@@ -13,6 +13,8 @@ import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SignUpDto } from './dto/auth.dto';
 import { AuthGuard, AuthGuardVerifiedEmail } from './auth.guard';
+import { Request } from 'express';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -49,6 +51,20 @@ export class AuthController {
     return (
       await this.authService.register(signUpDto.email, signUpDto.password)
     ).uid;
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('create-user')
+  @UseGuards(AuthGuardVerifiedEmail)
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    description: 'OK',
+  })
+  async createUser(@Req() req: Request, @Body() body: CreateUserDto) {
+    const uid = await this.authService.getUidFromRequest(req);
+    await this.authService.createUser(uid, body);
+    return 'OK';
   }
 
   @HttpCode(HttpStatus.OK)
