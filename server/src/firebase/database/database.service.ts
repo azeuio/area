@@ -15,6 +15,7 @@ export class DatabaseService implements OnModuleInit {
   public readonly servicesRefId = 'services';
   public readonly actionsRefId = 'actions';
   public readonly boardsRefId = 'boards';
+  public readonly areasRefId = 'areas';
 
   onModuleInit() {
     this.app = admin.initializeApp({
