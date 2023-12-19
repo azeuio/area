@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import { initializeApp } from "firebase/app";
 import firebaseConfig from './firebaseConfig.json';
 import ForgotPassword from './pages/ForgotPassword';
+import Home from './pages/Home';
 
 initializeApp(firebaseConfig);
 
@@ -18,6 +19,7 @@ ReactDOM.render(
         <Route path="forgot-password" element={<ForgotPassword />} />
         <Route path="register" element={<Register />} />
         <Route path="login" element={<Login />} />
+        <Route path="/" element={<Home />} />
         <Route path="*" element={<div>404</div>} />
       </Routes> 
     </BrowserRouter>
