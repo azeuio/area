@@ -10,10 +10,19 @@ Furthermore it is expected that we separated the project into multiple tasks, th
 
 A PoC of the project in the selected language wil be appreciated.
 
-
 - Defense MVP: due 2023-12-13
 
 Goal: demonstrate that we were able to realise the core architecture of the project and implemented the base concepts (make different APIs interact with each other).
+
+- Sprint1: due 2023-12-27
+
+Goal: have a working project with every chore features working so that we have time left to add new services, actions and reactions.
+We need to have at least 5 services and 12 actions/reactions.
+
+- Sprint2: due 2024-01-03
+
+Goal: Have the project working as expected, compiling, running, and the amount of services/actions/reactions needed.
+We'll have some time left before the Final product defense to fix the little bugs we mays encounter, maybe make the UI better. And prepare the defense.
 
 - Defense Final Product: due 2024-01-08
 

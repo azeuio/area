@@ -98,3 +98,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+
+scripts:
+  architecture: lakos -o architecture.dot . && dot -Tsvg architecture.dot -o architecture.svg

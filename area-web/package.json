@@ -22,7 +22,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "architecture": "depcruise --include-only \"^src\" --output-type dot src | dot -T svg > dependencygraph.svg"
   },
   "eslintConfig": {
     "extends": [
@@ -43,6 +44,7 @@
     ]
   },
   "devDependencies": {
+    "dependency-cruiser": "^15.5.0",
     "tailwindcss": "^3.3.6"
   }
 }
