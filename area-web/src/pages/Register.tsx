@@ -24,7 +24,7 @@ function Register() {
 
     const handleRegistration = async () => {
         try {
-            const response = await fetch('http://10.29.126.76:8080/auth/register', {
+            const response = await fetch('http://10.29.126.52:8080/auth/register', {
                 method: 'POST',
                 headers: {
                 'Accept': 'application/json',
@@ -94,7 +94,7 @@ function Register() {
                 return;
             }
 
-            const response = await fetch('http://10.29.126.76:8080/auth/create-user', {
+            const response = await fetch('http://10.29.126.52:8080/auth/create-user', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -138,7 +138,7 @@ function Register() {
                 return;
             }
 
-            const response = await fetch('http://10.29.125.246:8080/auth/create-user', {
+            const response = await fetch('http://10.29.126.52:8080/auth/create-user', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -170,21 +170,21 @@ function Register() {
         <div className='h-screen flex flex-col'>
             <GetStartedNavbar logo={area_logo} logoLink='/' loginLink='/login' exploreLink='/explore' buttonOnClick={() => {navigate("/register")}}/>
             <div className="flex flex-col items-center flex-grow justify-center">
-                <div className='space-y-[7%] flex flex-col items-center justify-center'>
-                    <p className="text-center text-6xl font-SpaceGrotesk">Register</p>
-                    <div className='space-y-[5%]'>
+                <div className='space-y-8 flex flex-col items-center justify-center'>
+                    <p className="text-center text-7xl font-SpaceGrotesk">Register</p>
+                    <div className='space-y-7'>
                         <TextInput placeholder="email" textInputStyle="bg-[#00000] border-[#D9D9D9] text-[#8E8E93] focus:border-[#34A853]" onChange={(event) => {setEmail(event.target.value)}}/>
                         <TextInput placeholder="username" textInputStyle="bg-[#00000] border-[#D9D9D9] text-[#8E8E93] focus:border-[#34A853]" onChange={(event) => {setUsername(event.target.value)}}/>
                         <TextInput placeholder="password" isPassword={true} textInputStyle="bg-[#00000] border-[#D9D9D9] text-[#8E8E93] focus:border-[#34A853]" onChange={(event) => {setPassword(event.target.value)}}/>
                     </div>
                     <CTA buttonText='Get Started' buttonStyle='bg-[#34A853] text-white text-5xl px-14' onClick={handleRegistration}/>
                 </div>
-                <p className='text-center text-4xl font-SpaceGrotesk py-[1%]'>Or</p>
+                <p className='text-center text-3xl font-SpaceGrotesk py-6'>Or</p>
                 <div className='space-x-12 flex flex-row items-center justify-center text-center'>
                     <LogoButton buttonLogo={google_logo} buttonStyle='bg-[#D9D9D9]' onClick={handleGoogleRegistration}/>
                     <LogoButton buttonLogo={github_logo} buttonStyle='bg-[#D9D9D9]' onClick={handleGithubRegistration}/>    
                 </div>
-                <p className='text-center text-3xl font-SpaceGrotesk py-[2%]'>
+                <p className='text-center text-3xl font-SpaceGrotesk py-6'>
                     Already have an account ?
                     <a href='/login' className='px-3 hover:underline'>Log in</a>
                 </p>
