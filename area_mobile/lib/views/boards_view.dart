@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:area_mobile/widgets/brick_button.dart';
 
-class BoardsPage extends StatelessWidget {
-  const BoardsPage({Key? key}) : super(key: key);
+class BoardsView extends StatelessWidget {
+  const BoardsView({super.key});
 
   @override
   Widget build(BuildContext context) {

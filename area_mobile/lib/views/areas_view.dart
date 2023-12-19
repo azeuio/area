@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class AreasPage extends StatelessWidget {
-  const AreasPage({super.key});
+class AreasView extends StatelessWidget {
+  const AreasView({super.key});
 
   @override
   Widget build(BuildContext context) {

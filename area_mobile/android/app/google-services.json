@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "902810887686",
+    "firebase_url": "https://area-25011-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "area-25011",
+    "storage_bucket": "area-25011.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:902810887686:android:c7af07ee89e1d24cd98587",
+        "android_client_info": {
+          "package_name": "com.example.area_mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "902810887686-bs9fvjbjq7c4ie0jccp1dpcdvkp1t7kv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4KusXOwwRjNeRJ9I3PEgUv1TxsFYh0IE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "902810887686-bs9fvjbjq7c4ie0jccp1dpcdvkp1t7kv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "902810887686-16e647nhgj87lthbi9cia6q5cv4i7d1d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.areaMobile"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

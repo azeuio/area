@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>902810887686-5l6s3jbbchmj5f50r5nm59b87g21tba8.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.902810887686-5l6s3jbbchmj5f50r5nm59b87g21tba8</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBSw4qSOWvDr2znsPbHlYRXehAMAww04cM</string>
+	<key>GCM_SENDER_ID</key>
+	<string>902810887686</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.areaMobile.RunnerTests</string>
+	<key>PROJECT_ID</key>
+	<string>area-25011</string>
+	<key>STORAGE_BUCKET</key>
+	<string>area-25011.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:902810887686:ios:b9ffcc78efa6f500d98587</string>
+	<key>DATABASE_URL</key>
+	<string>https://area-25011-default-rtdb.europe-west1.firebasedatabase.app</string>
+</dict>
+</plist>
