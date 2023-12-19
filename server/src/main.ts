@@ -7,6 +7,7 @@ async function bootstrap() {
     logger: console,
   });
 
+  app.enableCors();
   const config = new DocumentBuilder()
     .setTitle('NestJS AREA API')
     .setDescription('The NestJS API for the AREA project')

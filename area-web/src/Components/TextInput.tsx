@@ -25,7 +25,7 @@ class TextInput extends React.Component<TextInputProps, TextInputState> {
         if (this.props.isPassword) {
             return (
                 <div className='relative'>
-                    <input type={this.state.show ? 'text' : 'password'} onChange={this.props.onChange} className={`rounded-[10px] border-[3px] font-SpaceGrotesk text-xxl px-3 py-3 focus:outline-none ${this.props.textInputStyle}`} placeholder={this.props.placeholder} />
+                    <input type={this.state.show ? 'text' : 'password'} onChange={this.props.onChange} className={`rounded-[10px] border-[3px] font-SpaceGrotesk text-4xl px-3 py-3 focus:outline-none ${this.props.textInputStyle}`} placeholder={this.props.placeholder} />
                     <div className="absolute right-3 transform -translate-y-1/2 top-1/2 cursor-pointer" onClick={this.handleShow}>
                         <svg className="h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
                             <g fill="#D9D9D9">
@@ -42,7 +42,7 @@ class TextInput extends React.Component<TextInputProps, TextInputState> {
         } else {
             return (
                 <div>
-                  <input onChange={this.props.onChange} className={`rounded-[10px] border-[3px] font-SpaceGrotesk text-xxl px-3 py-3 focus:outline-none ${this.props.textInputStyle}`} placeholder={this.props.placeholder} />
+                  <input onChange={this.props.onChange} className={`rounded-[10px] border-[3px] font-SpaceGrotesk text-4xl px-3 py-3 focus:outline-none ${this.props.textInputStyle}`} placeholder={this.props.placeholder} />
                 </div>
             );
         }
