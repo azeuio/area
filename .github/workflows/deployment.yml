@@ -1,9 +1,6 @@
 name: deployment
 
-on:
-  push:
-    branches:
-      - main
+on: [push]
 
 env:
   MIRROR_URL: "git@github.com:EpitechPromo2026/B-DEV-500-NAN-5-1-area-hugo.guiheneuf.git"
@@ -24,3 +21,25 @@ jobs:
             ${{ env.MIRROR_URL }}
           ssh_private_key:
             ${{ secrets.SSH_KEY }}
+  check_prettier_coding_style:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install prettier globally
+        run: npm install -g prettier
+      - name: Check Prettier coding style
+        run: prettier --check ./area-web/**/*.tsx ./server/**/*.ts
+  check_dart_coding_style:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install dart
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: '2.0.6'
+      - name: Check dart coding style
+        run: dart format --set-exit-if-changed area-mobile/

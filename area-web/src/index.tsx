@@ -1,14 +1,14 @@
-import { StrictMode } from 'react';
-import ReactDOM from 'react-dom';
+import { StrictMode } from "react";
+import ReactDOM from "react-dom";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import './index.css';
+import "./index.css";
 
-import Register from './pages/Register';
-import Login from './pages/Login';
+import Register from "./pages/Register";
+import Login from "./pages/Login";
 import { initializeApp } from "firebase/app";
-import firebaseConfig from './firebaseConfig.json';
-import ForgotPassword from './pages/ForgotPassword';
-import Home from './pages/Home';
+import firebaseConfig from "./firebaseConfig.json";
+import ForgotPassword from "./pages/ForgotPassword";
+import Home from "./pages/Home";
 
 initializeApp(firebaseConfig);
 
@@ -21,8 +21,8 @@ ReactDOM.render(
         <Route path="login" element={<Login />} />
         <Route path="/" element={<Home />} />
         <Route path="*" element={<div>404</div>} />
-      </Routes> 
+      </Routes>
     </BrowserRouter>
   </StrictMode>,
-  document.getElementById('root')
+  document.getElementById("root"),
 );
