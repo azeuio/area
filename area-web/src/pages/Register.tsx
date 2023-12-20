@@ -24,7 +24,7 @@ function Register() {
 
     const handleRegistration = async () => {
         try {
-            const response = await fetch('http://10.29.126.52:8080/auth/register', {
+            const response = await fetch('http://127.0.0.1:8080/auth/register', {
                 method: 'POST',
                 headers: {
                 'Accept': 'application/json',
@@ -43,7 +43,7 @@ function Register() {
                 setModalText("Error when creating your account, please verify your informations.");
                 return;
             }
-            
+
             const auth = getAuth();
             signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
@@ -94,7 +94,7 @@ function Register() {
                 return;
             }
 
-            const response = await fetch('http://10.29.126.52:8080/auth/create-user', {
+            const response = await fetch('http://127.0.0.1:8080/auth/create-user', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -121,7 +121,7 @@ function Register() {
             setModalText("Google Sign-In failed. Please try again later.");
         }
     };
-    
+
 
     const handleGithubRegistration = async () => {
         try {
@@ -138,7 +138,7 @@ function Register() {
                 return;
             }
 
-            const response = await fetch('http://10.29.126.52:8080/auth/create-user', {
+            const response = await fetch('http://127.0.0.1:8080/auth/create-user', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',

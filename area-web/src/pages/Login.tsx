@@ -48,7 +48,7 @@ function Login() {
         await signInWithPopup(auth, provider, browserPopupRedirectResolver)
             .then(async (result) => {
                 const isFirstLogin = getAdditionalUserInfo(result)?.isNewUser
-                    
+
                 if (isFirstLogin) {
                     const userToken = await getAuth().currentUser?.getIdToken();
 
@@ -58,7 +58,7 @@ function Login() {
                         return;
                     }
 
-                    const response = await fetch('http://10.29.126.52:8080/auth/create-user', {
+                    const response = await fetch('http://127.0.0.1:8080/auth/create-user', {
                         method: 'POST',
                         headers: {
                             'Accept': 'application/json',
@@ -91,7 +91,7 @@ function Login() {
         await signInWithPopup(auth, provider, browserPopupRedirectResolver)
             .then(async (result) => {
                 const isFirstLogin = getAdditionalUserInfo(result)?.isNewUser
-                    
+
                 if (isFirstLogin) {
                     const userToken = await getAuth().currentUser?.getIdToken();
 
@@ -101,7 +101,7 @@ function Login() {
                         return;
                     }
 
-                    const response = await fetch('http://10.29.126.52:8080/auth/create-user', {
+                    const response = await fetch('http://127.0.0.1:8080/auth/create-user', {
                         method: 'POST',
                         headers: {
                             'Accept': 'application/json',
