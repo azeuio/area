@@ -1,3 +1,3 @@
 import { Service } from '../entities/service.entity';
 
-export class FindAllServiceDto extends Map<string, Service> {}
+export type FindAllServiceDto = Record<string, Service>;

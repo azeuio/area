@@ -4,13 +4,17 @@ import { UpdateServiceDto } from './dto/update-service.dto';
 import { DatabaseService } from '../database/database.service';
 import { Service } from './entities/service.entity';
 import { FindAllServiceDto } from './dto/find-all-service.dto';
+import { User } from '../auth/entities/user.dto';
 
 @Injectable()
 export class ServicesService {
   constructor(private database: DatabaseService) {}
 
   create(createServiceDto: CreateServiceDto) {
-    this.database.pushData(this.database.servicesRefId, createServiceDto);
+    return this.database.pushData(
+      this.database.servicesRefId,
+      createServiceDto,
+    );
   }
 
   async findAll() {
@@ -28,13 +32,24 @@ export class ServicesService {
   }
 
   update(id: string, updateServiceDto: UpdateServiceDto) {
-    this.database.updateData(
+    return this.database.updateData(
       this.database.servicesRefId + '/' + id,
       updateServiceDto,
     );
   }
 
   remove(id: string) {
-    this.database.removeData(this.database.servicesRefId + '/' + id);
+    return this.database.removeData(this.database.servicesRefId + '/' + id);
+  }
+
+  async findAllActiveServicesForUser(uid: string) {
+    const user = await this.database.getData<User>(
+      this.database.usersRefId + '/' + uid,
+    );
+    const services = await this.findAll();
+
+    return Object.entries(services || {})
+      .filter(([_, service]) => user.credentials?.[service.name.toLowerCase()])
+      .map(([id, service]) => Object.assign({ id }, service));
   }
 }

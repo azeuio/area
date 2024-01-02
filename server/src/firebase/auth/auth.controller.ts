@@ -12,7 +12,7 @@ import {
 import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SignUpDto } from './dto/auth.dto';
-import { AuthGuard, AuthGuardVerifiedEmail } from './auth.guard';
+import { AuthGuard } from './auth.guard';
 import { Request } from 'express';
 import { CreateUserDto } from './dto/create-user.dto';
 

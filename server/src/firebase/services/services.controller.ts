@@ -6,16 +6,24 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { AuthGuardVerifiedEmail } from '../auth/auth.guard';
+import { AuthService } from '../auth/auth.service';
+import { Request } from 'express';
 
 @ApiTags('Services')
 @Controller('services')
 export class ServicesController {
-  constructor(private readonly servicesService: ServicesService) {}
+  constructor(
+    private readonly servicesService: ServicesService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Post()
   create(@Body() createServiceDto: CreateServiceDto) {
@@ -25,6 +33,15 @@ export class ServicesController {
   @Get()
   async findAll() {
     return await this.servicesService.findAll();
+  }
+
+  @Get('active')
+  @UseGuards(AuthGuardVerifiedEmail)
+  @ApiBearerAuth()
+  async findActiveForUser(@Req() req: Request) {
+    const uid = await this.authService.getUidFromRequest(req);
+
+    return await this.servicesService.findAllActiveServicesForUser(uid);
   }
 
   @Get(':id')
