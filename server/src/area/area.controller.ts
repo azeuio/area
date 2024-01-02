@@ -36,7 +36,15 @@ export class AreaController {
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Create an area',
-    description: 'Creates an area and returns its id',
+    description: `
+    Creates an area and returns its id
+
+    The field \`from\` take in the id of an action
+    the other field is a remapping of their outputs
+      i.e. if \`outputs\` is [3, 1], then the next action will receive the 4th output of the trigger action as the first input, and the 2nd output of the trigger action as the second input
+
+    The field \`to\` is the same as \`from\` but we set its inputs instead of its outputs
+    `,
   })
   async create(@Body() createAreaDto: CreateAreaDto, @Req() req: Request) {
     return this.areaService.create(

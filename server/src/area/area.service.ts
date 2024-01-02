@@ -45,7 +45,6 @@ export class AreaService {
         cause: 'Board does not exist or does not belong to the user',
       });
     }
-    console.log('boardId', boardId);
 
     const areas = await this.db
       .getRef(this.db.areasRefId)

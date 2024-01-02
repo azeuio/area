@@ -1,6 +1,9 @@
+import { AreaAction, AreaTrigger } from '../entities/area.entity';
+
 export class CreateAreaDto {
-  readonly parent?: string;
-  readonly from: string;
-  readonly to: string;
+  readonly from: AreaTrigger;
+  readonly to: AreaAction;
   readonly board_id: string;
+  readonly parent?: string;
+  readonly child?: string;
 }

@@ -1,7 +1,7 @@
-import React from "react";
-import Marquee from "react-fast-marquee";
-import { ReactComponent as BrickButtonSVG } from "../assets/brick_button.svg";
-import "./BrickButton.css";
+import React from 'react';
+import Marquee from 'react-fast-marquee';
+import { ReactComponent as BrickButtonSVG } from '../assets/brick_button.svg';
+import './BrickButton.css';
 
 interface BrickButtonProps {
   onClick: () => void;
@@ -16,7 +16,7 @@ const BrickButton: React.FC<BrickButtonProps> = ({
   color,
   logo,
 }) => {
-  const spaces = "\u00A0".repeat(5);
+  const spaces = '\u00A0'.repeat(5);
 
   return (
     <div className="brick-button-container">

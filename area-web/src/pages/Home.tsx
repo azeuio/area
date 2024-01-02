@@ -1,16 +1,13 @@
-import React from "react";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import GetStartedNavbar from "../Components/GetStartedNavbar";
+import home_service_picture from '../assets/HomeServicePicture.svg';
+import home_action_picture from '../assets/HomeActionPicture.svg';
+import home_reaction_picture from '../assets/HomeReactionPicture.svg';
+import home_board_picture from '../assets/HomeBoardPicture.svg';
 
-import area_logo from "../assets/area_logo.svg";
-import home_service_picture from "../assets/HomeServicePicture.svg";
-import home_action_picture from "../assets/HomeActionPicture.svg";
-import home_reaction_picture from "../assets/HomeReactionPicture.svg";
-import home_board_picture from "../assets/HomeBoardPicture.svg";
-
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 function Home() {
   const navigate = useNavigate();
@@ -20,25 +17,19 @@ function Home() {
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        navigate("/boards");
+        user.getIdToken().then((token) => {
+          localStorage.setItem('token', token);
+          localStorage.setItem('refreshToken', user.refreshToken);
+          localStorage.setItem('uid', user.uid);
+          navigate('/boards');
+        });
       }
     });
     return () => unsubscribe();
   }, [navigate]);
 
   return (
-    <div className="h-screen flex flex-col snap-y snap-mandatory overflow-scroll">
-      <div className="sticky top-0">
-        <GetStartedNavbar
-          logo={area_logo}
-          logoLink="/"
-          loginLink="/login"
-          exploreLink="/explore"
-          buttonOnClick={() => {
-            navigate("/register");
-          }}
-        />
-      </div>
+    <div className="h-[90vh] flex flex-col snap-y snap-mandatory overflow-scroll">
       <div className="flex flex-col items-center flex-grow justify-center pt-20 pb-40 space-y-40">
         <div className="snap-center flex flex-col items-center justify-center w-3/4 space-y-20">
           <div>
@@ -79,7 +70,7 @@ function Home() {
               You're done !
             </p>
             <p className="text-center text-5xl font-SpaceGrotesk">
-              This reaction will run everytime the{" "}
+              This reaction will run everytime the{' '}
             </p>
             <p className="text-center text-5xl font-SpaceGrotesk">
               action happens !

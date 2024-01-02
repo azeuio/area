@@ -1,15 +1,13 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import GetStartedNavbar from "../Components/GetStartedNavbar";
-import LogoButton from "../Components/LogoButton";
-import TextInput from "../Components/TextInput";
+import LogoButton from '../Components/LogoButton';
+import TextInput from '../Components/TextInput';
 
-import area_logo from "../assets/area_logo.svg";
-import google_logo from "../assets/google_logo.svg";
-import github_logo from "../assets/github_logo.svg";
-import CTA from "../Components/CTA";
-import Modal from "../Components/Modal";
+import google_logo from '../assets/google_logo.svg';
+import github_logo from '../assets/github_logo.svg';
+import CTA from '../Components/CTA';
+import Modal from '../Components/Modal';
 
 import {
   getAuth,
@@ -20,33 +18,35 @@ import {
   signInWithPopup,
   browserPopupRedirectResolver,
   getAdditionalUserInfo,
-} from "firebase/auth";
+} from 'firebase/auth';
+import GlobalContext from '../GlobalContext';
 
 function Login() {
   const navigate = useNavigate();
+  const { backendUrl } = React.useContext(GlobalContext);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [modalText, setModalText] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [modalText, setModalText] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
 
   const handleSignIn = async () => {
     const auth = getAuth();
 
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         const user = userCredential.user;
 
         if (user.emailVerified === false) {
-          setModalText("Please verify your email before signing in.");
+          setModalText('Please verify your email before signing in.');
           setIsModalOpen(true);
           signOut(auth);
           return;
         }
-        navigate("/boards");
+        navigate('/boards');
       })
       .catch((error) => {
         setModalText(
-          "Error while signing in, please verify your informations.",
+          'Error while signing in, please verify your informations.',
         );
         setIsModalOpen(true);
       });
@@ -65,36 +65,33 @@ function Login() {
 
           if (userToken === undefined) {
             setIsModalOpen(true);
-            setModalText("Google Sign-In failed. Please try again later.");
+            setModalText('Google Sign-In failed. Please try again later.');
             return;
           }
 
-          const response = await fetch(
-            "http://127.0.0.1:8080/auth/create-user",
-            {
-              method: "POST",
-              headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + userToken,
-              },
-              body: JSON.stringify({
-                username: result.user.displayName,
-              }),
+          const response = await fetch(`${backendUrl}/auth/create-user`, {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + userToken,
             },
-          );
+            body: JSON.stringify({
+              username: result.user.displayName,
+            }),
+          });
 
-          if ((await response.text()) !== "OK") {
+          if ((await response.text()) !== 'OK') {
             setIsModalOpen(true);
-            setModalText("Google Sign-In failed. Please try again later.");
+            setModalText('Google Sign-In failed. Please try again later.');
             return;
           }
         }
-        navigate("/boards");
+        navigate('/boards');
       })
       .catch((error) => {
         setModalText(
-          "Error while signing in with Google, please try again later.",
+          'Error while signing in with Google, please try again later.',
         );
         setIsModalOpen(true);
       });
@@ -113,52 +110,39 @@ function Login() {
 
           if (userToken === undefined) {
             setIsModalOpen(true);
-            setModalText("Google Sign-In failed. Please try again later.");
+            setModalText('Google Sign-In failed. Please try again later.');
             return;
           }
 
-          const response = await fetch(
-            "http://127.0.0.1:8080/auth/create-user",
-            {
-              method: "POST",
-              headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + userToken,
-              },
-              body: JSON.stringify({
-                username: result.user.displayName,
-              }),
+          const response = await fetch(`${backendUrl}/auth/create-user`, {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + userToken,
             },
-          );
+            body: JSON.stringify({
+              username: result.user.displayName,
+            }),
+          });
 
-          if ((await response.text()) !== "OK") {
+          if ((await response.text()) !== 'OK') {
             setIsModalOpen(true);
-            setModalText("Google Sign-In failed. Please try again later.");
+            setModalText('Google Sign-In failed. Please try again later.');
             return;
           }
         }
-        navigate("/boards");
+        navigate('/boards');
       })
       .catch((error) => {
         setModalText(
-          "Error while signing in with Github, please try again later.",
+          'Error while signing in with Github, please try again later.',
         );
         setIsModalOpen(true);
       });
   };
-
   return (
-    <div className="h-screen flex flex-col">
-      <GetStartedNavbar
-        logo={area_logo}
-        logoLink="/"
-        loginLink="/login"
-        exploreLink="/explore"
-        buttonOnClick={() => {
-          navigate("/register");
-        }}
-      />
+    <div className="h-[90vh] flex flex-col">
       <div className="flex flex-col items-center flex-grow justify-center">
         <div className="flex flex-col items-center justify-center">
           <p className="text-center text-7xl font-SpaceGrotesk py-8">Login</p>

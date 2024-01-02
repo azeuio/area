@@ -1,10 +1,10 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import GetStartedNavbar from "../Components/GetStartedNavbar";
-import UserNavbar from "../Components/UserNavbar";
-import area_logo from "../assets/area_logo.svg";
-import profile_icon from "../assets/profile_icon.svg";
+import GetStartedNavbar from '../Components/GetStartedNavbar';
+import UserNavbar from '../Components/UserNavbar';
+import area_logo from '../assets/area_logo.svg';
+import profile_icon from '../assets/profile_icon.svg';
 
 function Playground() {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ function Playground() {
         loginLink="/login"
         exploreLink="/explore"
         buttonOnClick={() => {
-          navigate("/getstarted");
+          navigate('/getstarted');
         }}
       />
       <UserNavbar

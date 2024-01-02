@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Test, TestingModule } from '@nestjs/testing';
 import { BoardsService } from './boards.service';
 import { DatabaseService } from '../firebase/database/database.service';
@@ -94,6 +95,7 @@ describe('BoardsService', () => {
       id: 'mockBoardId',
       name: 'mockBoardName',
       description: 'mockBoardDesc',
+      owner_id: 'mockUid',
     });
   });
 

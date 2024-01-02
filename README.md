@@ -11,3 +11,7 @@ The figma designs can be found [here](https://www.figma.com/files/team/131126885
 ## Technological Stack
 
 The technological stack is defined [here](docs/technological-stack.md)
+
+## Tutorials
+
+### [How to add a new action/trigger](docs/create-an-action.md)

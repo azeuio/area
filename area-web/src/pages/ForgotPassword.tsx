@@ -1,47 +1,36 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import GetStartedNavbar from "../Components/GetStartedNavbar";
-import TextInput from "../Components/TextInput";
+import TextInput from '../Components/TextInput';
 
-import area_logo from "../assets/area_logo.svg";
-import CTA from "../Components/CTA";
-import Modal from "../Components/Modal";
+import CTA from '../Components/CTA';
+import Modal from '../Components/Modal';
 
-import { sendPasswordResetEmail, getAuth } from "firebase/auth";
+import { sendPasswordResetEmail, getAuth } from 'firebase/auth';
 
 function ForgotPassword() {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [modalText, setModalText] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [navigateDestination, setNavigateDestination] = React.useState("");
+  const [modalText, setModalText] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [navigateDestination, setNavigateDestination] = React.useState('');
 
   const handlePasswordReset = async () => {
     try {
       const auth = getAuth();
       await sendPasswordResetEmail(auth, email);
-      setModalText("An email has been sent to you to reset your password");
-      setNavigateDestination("/login");
+      setModalText('An email has been sent to you to reset your password');
+      setNavigateDestination('/login');
       setIsModalOpen(true);
     } catch (error) {
-      setModalText("An error occured while sending the email");
-      setNavigateDestination("/forgot-password");
+      setModalText('An error occured while sending the email');
+      setNavigateDestination('/forgot-password');
       setIsModalOpen(true);
     }
   };
 
   return (
-    <div className="h-screen flex flex-col">
-      <GetStartedNavbar
-        logo={area_logo}
-        logoLink="/"
-        loginLink="/login"
-        exploreLink="/explore"
-        buttonOnClick={() => {
-          navigate("/register");
-        }}
-      />
+    <div className="h-[90vh] flex flex-col">
       <div className="flex flex-col items-center flex-grow justify-center">
         <div className="space-y-10 flex flex-col items-center justify-center">
           <p className="text-center text-7xl font-SpaceGrotesk">

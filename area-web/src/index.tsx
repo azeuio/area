@@ -1,28 +1,38 @@
-import { StrictMode } from "react";
-import ReactDOM from "react-dom";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import "./index.css";
+import { StrictMode } from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import './index.css';
 
-import Register from "./pages/Register";
-import Login from "./pages/Login";
-import { initializeApp } from "firebase/app";
-import firebaseConfig from "./firebaseConfig.json";
-import ForgotPassword from "./pages/ForgotPassword";
-import Home from "./pages/Home";
+import { GlobalContextProvider, defaultGlobalContext } from './GlobalContext';
+import Register from './pages/Register';
+import Login from './pages/Login';
+import { initializeApp } from 'firebase/app';
+import firebaseConfig from './firebaseConfig.json';
+import ForgotPassword from './pages/ForgotPassword';
+import Home from './pages/Home';
+import Spotify from './pages/Spotify';
+import Boards from './pages/Boards';
+import Page404 from './pages/Page404';
+import Navbar from './Components/Navbar';
 
 initializeApp(firebaseConfig);
 
 ReactDOM.render(
   <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="forgot-password" element={<ForgotPassword />} />
-        <Route path="register" element={<Register />} />
-        <Route path="login" element={<Login />} />
-        <Route path="/" element={<Home />} />
-        <Route path="*" element={<div>404</div>} />
-      </Routes>
-    </BrowserRouter>
+    <GlobalContextProvider>
+      <BrowserRouter>
+        <Navbar style={{ height: defaultGlobalContext.navbarHeight }} />
+        <Routes>
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="register" element={<Register />} />
+          <Route path="login" element={<Login />} />
+          <Route path="spotify-callback" element={<Spotify />} />
+          <Route path="boards" element={<Boards />} />
+          <Route path="/" element={<Home />} />
+          <Route path="*" element={<Page404 />} />
+        </Routes>
+      </BrowserRouter>
+    </GlobalContextProvider>
   </StrictMode>,
-  document.getElementById("root"),
+  document.getElementById('root'),
 );

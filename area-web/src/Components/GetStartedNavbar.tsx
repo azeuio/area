@@ -1,5 +1,5 @@
-import React from "react";
-import CTA from "./CTA";
+import React from 'react';
+import CTA from './CTA';
 
 interface GetStartedNavbarProps {
   buttonOnClick?: () => void;
@@ -9,12 +9,18 @@ interface GetStartedNavbarProps {
   loginLink?: string;
   isExplore?: boolean;
   isLogin?: boolean;
+  style?: {
+    height: string;
+  };
 }
 
 class GetStartedNavbar extends React.Component<GetStartedNavbarProps> {
   render() {
+    const height = this.props.style?.height || '10vh';
     return (
-      <div className="py-7 pl-11 flex items-center justify-between">
+      <div
+        className={`py-7 pl-11 h-[${height}] flex items-center justify-between sticky top-0 z-50`}
+      >
         <a href={this.props.logoLink}>
           <img src={this.props.logo} alt="Area logo" />
         </a>
@@ -22,7 +28,7 @@ class GetStartedNavbar extends React.Component<GetStartedNavbarProps> {
           <a href={this.props.exploreLink}>
             <button
               className={`text-4xl font-SpaceGrotesk hover:underline ${
-                this.props.isExplore ? "underline" : ""
+                this.props.isExplore ? 'underline' : ''
               }`}
             >
               Explore
@@ -31,7 +37,7 @@ class GetStartedNavbar extends React.Component<GetStartedNavbarProps> {
           <a href={this.props.loginLink}>
             <button
               className={`text-4xl font-SpaceGrotesk hover:underline  ${
-                this.props.isLogin ? "underline" : ""
+                this.props.isLogin ? 'underline' : ''
               }`}
             >
               Log in

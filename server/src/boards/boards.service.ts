@@ -37,9 +37,9 @@ export class BoardsService {
     );
   }
 
-  async findOne(id: string, uid: string) {
+  async findOne(id: string, uid?: string) {
     const board = await this.db.getData<Board>(`${this.db.boardsRefId}/${id}`);
-    if (board?.owner_id !== uid) {
+    if (uid && board?.owner_id !== uid) {
       throw new HttpException('Board not found', HttpStatus.NOT_FOUND, {
         cause: 'Board does not exist or does not belong to the user',
       });
@@ -47,7 +47,6 @@ export class BoardsService {
     return {
       id: id,
       ...board,
-      owner_id: undefined,
     };
   }
 

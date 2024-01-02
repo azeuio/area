@@ -1,12 +1,33 @@
 {
   "rules": {
-    ".read": "now < 1703804400000", // 2023-12-29
-    ".write": "now < 1703804400000", // 2023-12-29
+    "users": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid == $uid || root.child('users').child(auth.uid).child('admin').val() == true)",
+        ".write": "auth != null && (auth.uid == $uid || root.child('users').child(auth.uid).child('admin').val() == true)"
+      }
+    },
+    "services": {
+      ".read": "auth != null",
+      ".write": "auth != null && root.child('users').child(auth.uid).child('admin').val() == true"
+    },
     "actions": {
-      ".indexOn": ["service_id", "name"]
+      ".indexOn": ["service_id", "name"],
+      ".read": "auth != null",
+      ".write": "auth != null && root.child('users').child(auth.uid).child('admin').val() == true"
     },
     "boards": {
-      ".indexOn": ["owner_id", "name"]
+      ".indexOn": ["owner_id", "name"],
+      "$board_id": {
+        ".read": "auth != null && (data.child('owner_id').val() == auth.uid || root.child('users').child(auth.uid).child('admin').val() == true)",
+        ".write": "auth != null && (data.child('owner_id').val() == auth.uid || root.child('users').child(auth.uid).child('admin').val() == true)"
+      }
+    },
+    "areas": {
+      ".indexOn": ["board_id"],
+      "$area_id": {
+        ".read": "auth != null && (root.child('boards').child(data.child('board_id').val()).child('owner_id').val() == auth.uid || root.child('users').child(auth.uid).child('admin').val() == true)",
+        ".write": "auth != null && (root.child('boards').child(data.child('board_id').val()).child('owner_id').val() == auth.uid || root.child('users').child(auth.uid).child('admin').val() == true)"
+      }
     }
   }
 }

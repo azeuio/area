@@ -8,5 +8,6 @@ import { AuthModule } from 'src/firebase/auth/auth.module';
   controllers: [BoardsController],
   providers: [BoardsService],
   imports: [DatabaseModule, AuthModule],
+  exports: [BoardsService],
 })
 export class BoardsModule {}
