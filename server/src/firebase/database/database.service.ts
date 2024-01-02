@@ -51,7 +51,11 @@ export class DatabaseService implements OnModuleInit {
     await this.db.ref(path).set(data, onComplete);
   }
 
-  async updateData<T>(path: string, data: T, onComplete?: (a: Error) => void) {
+  async updateData<T>(
+    path: string,
+    data: Partial<T>,
+    onComplete?: (a: Error) => void,
+  ) {
     await this.db.ref(path).update(data, onComplete);
   }
 

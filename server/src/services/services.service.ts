@@ -74,6 +74,16 @@ export class ServicesService {
     this.actionDelegates = {
       spotify002: this.actionSpotifySetPlayerVolume.bind(this),
       log: this.actionLog.bind(this),
+      general_addition: async (
+        _users,
+        _trigger,
+        _self,
+        _area,
+        _options,
+        ...args
+      ) => {
+        return [args.reduce((a, b) => a + b, 0)];
+      },
     };
     setTimeout(() => {
       this.database
@@ -94,7 +104,8 @@ export class ServicesService {
   // Tries to trigger every area that has a trigger and a reaction
   async processAreas() {
     this.areas = Object.entries(
-      await this.database.getData<AreaWithId[]>(this.database.areasRefId),
+      (await this.database.getData<AreaWithId[]>(this.database.areasRefId)) ??
+        {},
     ).map(([id, area]: [string, Area]) => ({
       id,
       ...area,
@@ -104,14 +115,12 @@ export class ServicesService {
       /* that is not being processed */
       .filter((area) => !this.areasBeingProcessed.hasOwnProperty(area.id))
       /* that has both a trigger and a reaction */
-      .filter((area) => this.actions.has(area.from.id))
-      .filter((area) => this.actions.get(area.from.id).is_a_trigger)
-      .filter((area) => this.actions.has(area.to.id))
+      .filter((area) => this.actions.get(area.action.id).is_a_trigger)
       .forEach((area) => {
         /* process the area */
         this.areasBeingProcessed[area.id] = this.processArea(area, {
-          ...this.actions.get(area.from.id),
-          id: area.from.id,
+          ...this.actions.get(area.action.id),
+          id: area.action.id,
         })
           /* and remove it from the being processed list when done */
           .finally(() => {
@@ -133,7 +142,21 @@ export class ServicesService {
         if (restartCount === 0) {
           res = await this.checkIfTriggered(trigger, area);
         }
-        await this.executeArea(trigger, area, res, restartCount);
+        if (!area.child_id) {
+          throw new AreaFinished(area);
+        }
+        const firstReaction = {
+          ...this.areas.find((a) => a.id === area.child_id),
+          id: area.child_id,
+        };
+        const firstReactionAction = this.actions.get(firstReaction.action.id);
+        await this.executeArea(
+          trigger,
+          { ...firstReactionAction, id: trigger.id },
+          firstReaction,
+          res,
+          restartCount,
+        );
       } catch (e) {
         const interupt = e as AreaInterupt;
 
@@ -165,36 +188,35 @@ export class ServicesService {
 
   async executeArea(
     trigger: ActionWithId,
+    self: ActionWithId,
     area: AreaWithId,
     triggerReturn: any[],
     restartCount = 0,
   ) {
-    const actionDelegate = this.actionDelegates[area.to.id];
+    const actionDelegate = this.actionDelegates[area.action.id];
     if (!actionDelegate) {
       throw new AreaFailed(area, trigger, 'No delegate');
     }
-    const reaction = { ...this.actions.get(area.to.id), id: area.to.id };
     const returnValue = await actionDelegate(
       await this.getConcernedUsers(area),
       trigger,
-      reaction,
+      self,
       area,
-      { restartCount, ...area.to.options },
+      { restartCount, ...area.action.options },
       ...triggerReturn,
     );
     if (!area.child_id) {
       throw new AreaFinished(area);
     }
     const childArea = this.areas.find((a) => a.id === area.child_id);
-    const childTrigger = this.actions.get(childArea?.from.id);
-    if (!childTrigger) {
-      throw new AreaFailed(area, reaction, 'No child trigger');
+    const childAction = this.actions.get(childArea?.action.id);
+    if (!childAction) {
+      throw new AreaFailed(area, self, 'No child trigger');
     }
     // TODO: check if the output matches the input of the next action (both in type and number)
-
-    const childTriggerWithId = { ...childTrigger, id: childArea.from.id };
     await this.executeArea(
-      childTriggerWithId,
+      self,
+      { ...childAction, id: childArea.action.id },
       childArea,
       returnValue,
       restartCount,
@@ -213,14 +235,14 @@ export class ServicesService {
       await this.getConcernedUsers(area),
       self,
       area,
-      area.from.options,
+      area.action.options,
     );
     if (!output) {
       throw new AreaFailed(area, self, 'Trigger delegate returned nothing');
     }
     const reorganizedOutput: any[] = [];
     try {
-      for (const i in area.from.outputs) {
+      for (const i in area.action.outputs) {
         reorganizedOutput.push(output[i]);
       }
     } catch (e) {

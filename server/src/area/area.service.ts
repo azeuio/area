@@ -24,9 +24,23 @@ export class AreaService {
         cause: 'Board does not exist or does not belong to the user',
       });
     }
-    const ref = await this.db.pushData(this.db.areasRefId, {
-      ...createAreaDto,
+    const ref = await this.db.pushData<Area>(this.db.areasRefId, {
+      action: createAreaDto.action,
+      board_id: createAreaDto.board_id,
     });
+    if (createAreaDto.child_id) {
+      await this.db.updateData<Area>(`${this.db.areasRefId}/${ref.key}`, {
+        child_id: createAreaDto.child_id,
+      });
+    }
+    if (createAreaDto.parent_id) {
+      await this.db.updateData<Area>(
+        `${this.db.areasRefId}/${createAreaDto.parent_id}`,
+        {
+          child_id: ref.key,
+        },
+      );
+    }
     return ref.key;
   }
 
