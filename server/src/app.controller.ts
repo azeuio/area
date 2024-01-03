@@ -24,12 +24,25 @@ export class AppController {
           return {
             name: actions[key].name,
             description: actions[key].description,
+            isATrigger: actions[key].is_a_trigger,
           };
         });
       return {
         name: serviceName,
-        actions: serviceActions,
-        reactions: serviceActions,
+        actions: serviceActions
+          .filter((action) => action.isATrigger)
+          .map((action) => {
+            const actionWOTrigger = { ...action };
+            delete actionWOTrigger.isATrigger;
+            return actionWOTrigger;
+          }),
+        reactions: serviceActions
+          .filter((action) => !action.isATrigger)
+          .map((action) => {
+            const actionWOTrigger = { ...action };
+            delete actionWOTrigger.isATrigger;
+            return actionWOTrigger;
+          }),
       };
     });
 
