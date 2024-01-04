@@ -12,7 +12,7 @@ type GlobalContextType = {
 };
 
 export const defaultGlobalContext: GlobalContextType = {
-  backendUrl: 'http://127.0.0.1:8080',
+  backendUrl: 'http://localhost:8080',
   frontendUrl: window.location.origin,
   navbarHeight: '10vh',
 } as GlobalContextType;

@@ -26,10 +26,6 @@ function Boards() {
     <>
       <div className={style.container}>
         <div className={style.content}>
-          <SpotifyServiceCard />
-          <SpotifyServiceCard />
-          <SpotifyServiceCard />
-          <SpotifyServiceCard />
         </div>
       </div>
     </>

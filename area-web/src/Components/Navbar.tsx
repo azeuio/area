@@ -13,7 +13,7 @@ type NavbarProps = {
 };
 function Navbar(props: NavbarProps) {
   const navigate = useNavigate();
-  const loggedInPages = ['/boards', '/areas', '/profile'];
+  const loggedInPages = ['/boards', '/areas', '/profile', '/update-services', '/select-services'];
   const [isLogged, setIsLogged] = React.useState(
     loggedInPages.includes(window.location.pathname),
   );

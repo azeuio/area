@@ -15,6 +15,7 @@ import Boards from './pages/Boards';
 import Page404 from './pages/Page404';
 import Navbar from './Components/Navbar';
 import SelectServices from './pages/SelectServices';
+import UpdateServices from './pages/UpdateServices';
 import Profile from './pages/Profile';
 
 initializeApp(firebaseConfig);
@@ -25,6 +26,7 @@ ReactDOM.render(
       <BrowserRouter>
         <Navbar style={{ height: defaultGlobalContext.navbarHeight }} />
         <Routes>
+          <Route path="update-services" element={<UpdateServices />} />
           <Route path="select-services" element={<SelectServices />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="register" element={<Register />} />
