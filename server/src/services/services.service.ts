@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Area } from '../area/entities/area.entity';
+import { Area, Filters } from '../area/entities/area.entity';
 import { Action } from '../firebase/actions/entities/action.entity';
 import { DatabaseService } from '../firebase/database/database.service';
 import { SpotifyService } from './spotify/spotify.service';
@@ -70,20 +70,15 @@ export class ServicesService {
     // timeout to wait for dependencies to load
     this.actionsIsTriggeredDelegates = {
       spotify001: this.triggerSongPlayingTriggered.bind(this),
+      general_timer: this.triggerTimer.bind(this),
     };
     this.actionDelegates = {
       spotify002: this.actionSpotifySetPlayerVolume.bind(this),
       log: this.actionLog.bind(this),
-      general_addition: async (
-        _users,
-        _trigger,
-        _self,
-        _area,
-        _options,
-        ...args
-      ) => {
-        return [args.reduce((a, b) => a + b, 0)];
-      },
+      general_addition: this.actionAddition.bind(this),
+      general_strcat: this.actionStrcat.bind(this),
+      general_join: this.actionJoin.bind(this),
+      general_atomize: this.actionAtomize.bind(this),
     };
     setTimeout(() => {
       this.database
@@ -115,6 +110,7 @@ export class ServicesService {
       /* that is not being processed */
       .filter((area) => !this.areasBeingProcessed.hasOwnProperty(area.id))
       /* that has both a trigger and a reaction */
+      .filter((area) => this.actions.get(area.action.id))
       .filter((area) => this.actions.get(area.action.id).is_a_trigger)
       .forEach((area) => {
         /* process the area */
@@ -186,6 +182,40 @@ export class ServicesService {
     } while (shouldRestart);
   }
 
+  private applyFilters(inputs: any[], filters?: Filters): any[] {
+    let newInputs = inputs;
+    if (!filters) return newInputs;
+    switch (filters.type) {
+      case 'cherry_pick':
+        return filters.inputs.map((i) => inputs[i]);
+      default:
+        if (filters.reverse) {
+          newInputs = newInputs.reverse();
+        }
+        if (filters.shift) {
+          newInputs = [
+            ...(filters.shift > 0
+              ? Array(filters.shift).fill(filters.shift_replace_value)
+              : []),
+            ...newInputs,
+            ...(filters.shift < 0
+              ? Array(filters.shift).fill(filters.shift_replace_value)
+              : []),
+          ];
+          if (filters.shift < 0) {
+            newInputs = newInputs.slice(-filters.shift);
+          }
+        }
+        if (filters.range) {
+          newInputs = newInputs.slice(
+            filters.range.start,
+            filters.range.end ?? newInputs.length,
+          );
+        }
+        return newInputs;
+    }
+  }
+
   async executeArea(
     trigger: ActionWithId,
     self: ActionWithId,
@@ -193,6 +223,7 @@ export class ServicesService {
     triggerReturn: any[],
     restartCount = 0,
   ) {
+    const inputs: any[] = this.applyFilters(triggerReturn, area.action.filters);
     const actionDelegate = this.actionDelegates[area.action.id];
     if (!actionDelegate) {
       throw new AreaFailed(area, trigger, 'No delegate');
@@ -203,7 +234,7 @@ export class ServicesService {
       self,
       area,
       { restartCount, ...area.action.options },
-      ...triggerReturn,
+      ...inputs,
     );
     if (!area.child_id) {
       throw new AreaFinished(area);
@@ -240,19 +271,11 @@ export class ServicesService {
     if (!output) {
       throw new AreaFailed(area, self, 'Trigger delegate returned nothing');
     }
-    const reorganizedOutput: any[] = [];
-    try {
-      for (const i in area.action.outputs) {
-        reorganizedOutput.push(output[i]);
-      }
-    } catch (e) {
-      throw new AreaFailed(
-        area,
-        self,
-        'Trigger delegate returned invalid data',
-      );
+    const outputs = this.applyFilters(output, area.action.filters);
+    if (!outputs) {
+      throw new AreaFailed(area, self, 'Trigger delegate returned nothing');
     }
-    return reorganizedOutput;
+    return outputs;
   }
 
   // returns a list because we might want to notify multiple users
@@ -264,6 +287,46 @@ export class ServicesService {
 
   //// vv Actions logic vv ////
   /// vv General vv ///
+  async triggerTimer(
+    users: User[],
+    self: ActionWithId,
+    area: AreaWithId,
+    options: any,
+  ) {
+    const startTime = new Date(options.start_time ?? 0);
+    const delay = options.delay ?? 0;
+    const now = new Date();
+    const timeSinceLastTrigger = now.getTime() - startTime.getTime();
+
+    if (startTime.getTime() === 0) {
+      // set the start time to now
+      this.database.updateData<Area>(`${this.database.areasRefId}/${area.id}`, {
+        action: {
+          ...area.action,
+          options: {
+            ...area.action.options,
+            start_time: now.getTime(),
+          },
+        },
+      });
+      return [0, now.getTime()];
+    }
+    if (timeSinceLastTrigger / 1000 >= delay) {
+      // set the start time to now
+      this.database.updateData<Area>(`${this.database.areasRefId}/${area.id}`, {
+        action: {
+          ...area.action,
+          options: {
+            ...area.action.options,
+            start_time: now.getTime(),
+          },
+        },
+      });
+      return [timeSinceLastTrigger / 1000, now.getTime() / 1000];
+    }
+    throw new AreaCancelled(area, self, 'Not triggered');
+  }
+
   private actionLog: ActionDelegate = async function (
     users: User[],
     trigger: ActionWithId,
@@ -281,6 +344,99 @@ export class ServicesService {
       ...args,
     );
     return args;
+  };
+
+  private readonly actionAddition: ActionDelegate = async function (
+    users: User[],
+    trigger: ActionWithId,
+    self: ActionWithId,
+    area: AreaWithId,
+    options: any,
+    fallthrough: any[],
+    ...args: number[]
+  ) {
+    const value = options.value ?? 0;
+    let fallthroughList: any[] = [];
+
+    if (fallthrough instanceof Array) {
+      fallthroughList = fallthrough;
+    } else if (fallthrough) {
+      fallthroughList = [fallthrough];
+    }
+
+    return [args.reduce((a, b) => a + b, value), ...fallthroughList];
+  };
+
+  private readonly actionStrcat: ActionDelegate = async function (
+    users: User[],
+    trigger: ActionWithId,
+    self: ActionWithId,
+    area: AreaWithId,
+    options: any,
+    fallthrough: any[],
+    ...args: string[]
+  ) {
+    const reversed = options.reversed ?? false;
+    let fallthroughList: any[] = [];
+
+    if (fallthrough instanceof Array) {
+      fallthroughList = fallthrough;
+    } else if (fallthrough) {
+      fallthroughList = [fallthrough];
+    }
+
+    return [
+      args.reduce((a, b) => (reversed ? b + a : a + b), ''),
+      ...fallthroughList,
+    ];
+  };
+
+  private readonly actionJoin: ActionDelegate = async function (
+    users: User[],
+    trigger: ActionWithId,
+    self: ActionWithId,
+    area: AreaWithId,
+    options: any,
+    fallthrough: any[],
+    ...args: any[]
+  ) {
+    let fallthroughList: any[] = [];
+
+    if (fallthrough instanceof Array) {
+      fallthroughList = fallthrough;
+    } else if (fallthrough) {
+      fallthroughList = [fallthrough];
+    }
+
+    return [args, ...fallthroughList];
+  };
+
+  private readonly actionAtomize: ActionDelegate = async function (
+    users: User[],
+    trigger: ActionWithId,
+    self: ActionWithId,
+    area: AreaWithId,
+    options: any,
+    fallthrough: any[],
+    ...args: any[]
+  ) {
+    let fallthroughList: any[] = [];
+
+    if (fallthrough instanceof Array) {
+      fallthroughList = fallthrough;
+    } else if (fallthrough) {
+      fallthroughList = [fallthrough];
+    }
+
+    return [
+      ...args.reduce((a, b) => {
+        if (b instanceof Array) {
+          return [...a, ...b];
+        }
+        return [...a, b];
+      }),
+      ...fallthroughList,
+    ];
   };
   /// ^^ General ^^ ///
   /// vv Spotify vv ///
