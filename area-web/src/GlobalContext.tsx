@@ -6,8 +6,7 @@ type GlobalContextType = {
   readonly backendUrl: string;
   readonly frontendUrl: string;
   readonly navbarHeight: string;
-  // user, setUser refs
-  user: User | null;
+  getUser: () => Promise<User | null>;
   auth: Auth;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
 };
@@ -26,20 +25,27 @@ const GlobalContext = createContext<GlobalContextType>({} as GlobalContextType);
 
 // component to be used in the root of the app to get access to global context
 export function GlobalContextProvider(props: { children: React.ReactNode }) {
-  const [user, setUser] = React.useState<User | null>(null);
   const auth = getAuth();
-  const globalContextValues: GlobalContextType = {
-    ...defaultGlobalContext,
-    user: user,
-    setUser: setUser,
-    auth: auth,
-  };
+  const globalContextValues: GlobalContextType = React.useMemo(() => {
+    return {
+      ...defaultGlobalContext,
+      getUser: async () => {
+        return new Promise((resolve, reject) => {
+          const unsubscribe = auth.onAuthStateChanged((user) => {
+            unsubscribe();
+            resolve(user);
+          }, reject);
+        });
+      },
+      auth: auth,
+    };
+  }, [auth]);
 
   React.useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUser(user);
+      console.log('hello du bateau', user, !!user);
     });
-    return () => unsubscribe();
+    return unsubscribe;
   }, [auth]);
 
   return (

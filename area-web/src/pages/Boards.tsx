@@ -5,14 +5,16 @@ import GlobalContext from '../GlobalContext';
 
 function Boards() {
   const navigate = useNavigate();
-  const { auth } = React.useContext(GlobalContext);
+  const { getUser } = React.useContext(GlobalContext);
 
   // redirect to login if not logged in
   React.useEffect(() => {
-    if (!auth.currentUser) {
-      navigate('/login');
-    }
-  }, [auth.currentUser, navigate]);
+    getUser().then((user) => {
+      if (!user) {
+        navigate('/login');
+      }
+    });
+  }, [getUser, navigate]);
 
   const style = {
     container: 'flex flex-col items-center',

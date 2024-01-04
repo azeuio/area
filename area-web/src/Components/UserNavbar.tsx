@@ -28,7 +28,7 @@ class UserNavbar extends React.Component<UserNavbarProps> {
 
     return (
       <div
-        className={`py-7 pl-11 h-[${height}] flex items-center justify-between sticky top-0 z-50`}
+        className={`py-7 pl-11 h-[${height}] flex items-center justify-between sticky top-0 z-50 bg-white`}
       >
         <a href={this.props.logoLink}>
           <img src={this.props.logo} alt="Area logo" className={imageSize} />

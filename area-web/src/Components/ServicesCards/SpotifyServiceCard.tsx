@@ -4,40 +4,41 @@ import spotify_logo from '../../assets/spotify_logo.svg';
 import GlobalContext from '../../GlobalContext';
 
 const SpotifyServiceCard = () => {
-  const { user } = React.useContext(GlobalContext);
-  const { backendUrl, frontendUrl } = React.useContext(GlobalContext);
+  const { backendUrl, frontendUrl, getUser } = React.useContext(GlobalContext);
   const [spotifyToken, setSpotifyToken] = React.useState('');
 
   // get spotify token for the current user from the backend
   React.useEffect(() => {
-    if (!user) {
-      return;
-    }
-    user
-      .getIdToken()
-      .then((token) => {
-        fetch(`${backendUrl}/users/${user.uid}`, {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data?.credentials?.spotify) {
-              setSpotifyToken(data.credentials.spotify.token);
-            }
+    getUser().then((user) => {
+      if (!user) {
+        return;
+      }
+      user
+        .getIdToken()
+        .then((token) => {
+          fetch(`${backendUrl}/users/${user.uid}`, {
+            method: 'GET',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + token,
+            },
           })
-          .catch((error) => {
-            console.error('Could not fetch user.', error);
-          });
-      })
-      .catch((error) => {
-        console.error('Could not get user token.', error);
-      });
-  }, [backendUrl, user]);
+            .then((response) => response.json())
+            .then((data) => {
+              if (data?.credentials?.spotify) {
+                setSpotifyToken(data.credentials.spotify.token);
+              }
+            })
+            .catch((error) => {
+              console.error('Could not fetch user.', error);
+            });
+        })
+        .catch((error) => {
+          console.error('Could not get user token.', error);
+        });
+    });
+  }, [backendUrl, getUser]);
 
   // get spotify token for the current user from the spotify api
   const getSpotifyAuth = async () => {
@@ -110,7 +111,7 @@ const SpotifyServiceCard = () => {
         );
         return;
       }
-
+      const user = await getUser();
       if (!user) {
         console.warn('You are not logged in.');
         return;
@@ -141,6 +142,7 @@ const SpotifyServiceCard = () => {
   };
 
   const deleteSpotifyAuth = async () => {
+    const user = await getUser();
     if (!user) {
       console.warn('You are not logged in.');
       return;

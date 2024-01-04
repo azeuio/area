@@ -5,7 +5,6 @@ import area_logo from '../assets/area_logo.svg';
 import default_profile from '../assets/profile_icon.svg';
 import GetStartedNavbar from './GetStartedNavbar';
 import { useNavigate } from 'react-router-dom';
-import GlobalContext from '../GlobalContext';
 
 type NavbarProps = {
   style?: {
@@ -14,17 +13,15 @@ type NavbarProps = {
 };
 function Navbar(props: NavbarProps) {
   const navigate = useNavigate();
-  const [isLogged, setIsLogged] = React.useState(false);
+  const loggedInPages = ['/boards', '/areas', '/profile'];
+  const [isLogged, setIsLogged] = React.useState(
+    loggedInPages.includes(window.location.pathname),
+  );
   const height = props.style?.height || '10vh';
-  const { auth } = React.useContext(GlobalContext);
 
   React.useEffect(() => {
-    const user = auth.currentUser;
-    if (user) {
-      setIsLogged(true);
-    }
-  }, [auth.currentUser, navigate]);
-
+    setIsLogged(loggedInPages.includes(window.location.pathname));
+  }, [navigate]);
   if (isLogged) {
     return (
       <UserNavbar

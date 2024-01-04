@@ -1,7 +1,8 @@
 import React from 'react';
 
 interface ServiceCardProps {
-  serviceCardStyle: string;
+  serviceCardStyle?: string;
+  backgroundColor?: string;
   name: string;
   logo: string;
   onClick?: () => void;
@@ -18,7 +19,11 @@ const ServiceCard: React.FC<ServiceCardProps> = (props) => {
     iconContainer: `rounded-full bg-[#fff] w-10 h-10 z-[2] flex items-center justify-center h-full sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-14 xl:h-14 2xl:w-16 2xl:h-16 min-[2000px]:w-20 min-[2000px]:h-20 min-[3500px]:w-24 min-[3500px]:h-24 max-[500px]:w-6 max-[500px]:h-6`,
   };
   return (
-    <div className={style.container} onClick={props.onClick}>
+    <div
+      className={style.container}
+      style={{ backgroundColor: props.backgroundColor }}
+      onClick={props.onClick}
+    >
       <div className={style.content}>
         <div className={style.iconContainer}>
           <Icon logo={props.logo} name={props.name} />
