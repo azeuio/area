@@ -279,9 +279,13 @@ export class ServicesService {
   }
 
   // returns a list because we might want to notify multiple users
-  async getConcernedUsers(area: Area) {
-    const board = await this.boardsService.findOne(area.board_id);
-    const owner = await this.usersService.findOne(board.owner_id);
+  async getConcernedUsers(area: AreaWithId) {
+    const board = await this.boardsService.findOne(area.board_id).catch(() => {
+      throw new AreaFailed(area, null, 'No board');
+    });
+    const owner = await this.usersService.findOne(board.owner_id).catch(() => {
+      throw new AreaFailed(area, null, 'No owner');
+    });
     return [owner];
   }
 
