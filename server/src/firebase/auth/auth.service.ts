@@ -22,6 +22,11 @@ export class AuthService {
     }
   }
 
+  async getTokenFromRequest(req: Request) {
+    const token = req.headers.authorization.split('Bearer ')[1];
+    return await this.checkToken(token);
+  }
+
   async genereteEmailVerificationLink(uid: string) {
     const user = await this.database.getAuth().getUser(uid);
     return await this.database
@@ -55,7 +60,7 @@ export class AuthService {
       await this.database.getAuth().getUser(decodedToken.uid);
       uid = decodedToken.uid;
     } catch (e) {
-      throw new HttpException('Invalid token', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Invalid token: ' + e, HttpStatus.BAD_REQUEST);
     }
     await Promise.all([
       this.database.getAuth().deleteUser(uid),
