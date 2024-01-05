@@ -4,16 +4,13 @@ import {
   Post,
   Body,
   Patch,
-  Param,
   Delete,
-  UseGuards,
   Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { AuthGuardIsOwner } from '../firebase/auth/auth.guard';
 import { AuthService } from 'src/firebase/auth/auth.service';
 import { Request } from 'express';
 
@@ -30,27 +27,22 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Get(':id')
+  @Get()
   @ApiBearerAuth()
-  @UseGuards(
-    AuthGuardIsOwner('id', {
-      isNotUser: 'You can only access your own account',
-    }),
-  )
-  async findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+  async findOne(@Req() req: Request) {
+    const uid = await this.auth.getUidFromRequest(req);
+    return this.usersService.findOne(uid);
   }
 
-  @Patch(':id')
+  @Patch()
   @ApiBearerAuth()
-  @UseGuards(AuthGuardIsOwner('id'))
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  async update(@Body() updateUserDto: UpdateUserDto, @Req() req: Request) {
+    const uid = await this.auth.getUidFromRequest(req);
+    return this.usersService.update(uid, updateUserDto);
   }
 
   @Delete()
   @ApiBearerAuth()
-  @UseGuards(AuthGuardIsOwner('id'))
   async remove(@Req() req: Request) {
     const token = req.headers.authorization.split('Bearer ')[1];
     return this.usersService.remove(token);
