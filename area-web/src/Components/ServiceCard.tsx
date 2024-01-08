@@ -21,14 +21,21 @@ const ServiceCard: React.FC<ServiceCardProps> = (props) => {
   return (
     <div
       className={style.container}
-      style={{ backgroundColor: props.backgroundColor }}
+      style={{
+        backgroundColor: props.activated ? props.backgroundColor : 'gray',
+      }}
       onClick={props.onClick}
     >
       <div className={style.content}>
         <div className={style.iconContainer}>
           <Icon logo={props.logo} name={props.name} />
         </div>
-        <div className={style.text}>{props.name}</div>
+        <div
+          className={style.text}
+          style={{ color: props.activated ? 'white' : 'darkgray' }}
+        >
+          {props.name}
+        </div>
       </div>
     </div>
   );
