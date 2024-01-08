@@ -13,13 +13,26 @@ type NavbarProps = {
 };
 function Navbar(props: NavbarProps) {
   const navigate = useNavigate();
-  const loggedInPages = ['/boards', '/areas', '/profile', '/update-services', '/select-services', '/update-settings']
+  const loggedInPages = ['/boards', '/areas', '/profile', '/update-services',
+    '/select-services', '/add-board', '/boards/:boardId', '/manage-board/:boardId', '/update-settings']
   const [isLogged, setIsLogged] = React.useState(loggedInPages.includes(window.location.pathname));
   const height = props.style?.height || '10vh';
 
   React.useEffect(() => {
-    setIsLogged(loggedInPages.includes(window.location.pathname))
+    setIsLogged(loggedInPages.includes(window.location.pathname));
+    const currentPath = window.location.pathname;
+    const isLogged = loggedInPages.some((page) => {
+      if (page.includes('/:')) {
+        const pattern = new RegExp(`^${page.replace(/:[^/]+/, '[^/]+')}$`);
+        return pattern.test(currentPath);
+      } else {
+        return page === currentPath;
+      }
+    });
+    setIsLogged(isLogged);
+  }, [navigate]);
   }, [navigate])
+
   if (isLogged) {
     return (
       <UserNavbar

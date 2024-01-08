@@ -32,7 +32,6 @@ function isSignedWithPassword(user: User): boolean {
 }
 
 async function tryUpdateUsername(backendUrl: string, userToken: string, actualUsername: string, newUsername: string): Promise<UpdateSettingsStatus> {
-    console.log('userToken', userToken)
     if (newUsername !== '' && newUsername !== actualUsername) {
         try {
             const response = await fetch(`${backendUrl}/users/`, {

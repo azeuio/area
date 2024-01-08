@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SpotifyServiceCard from '../Components/ServicesCards/SpotifyServiceCard';
 import GlobalContext from '../GlobalContext';
+import BoardCard from '../Components/BoardCard';
+import add_icon from '../assets/add_icon.svg';
 
 function Boards() {
   const navigate = useNavigate();
-  const { getUser } = React.useContext(GlobalContext);
+  const { getUser, backendUrl } = useContext(GlobalContext);
+  const [boards, setBoards] = useState<any[]>([]);
 
-  // redirect to login if not logged in
-  React.useEffect(() => {
+  useEffect(() => {
     getUser().then((user) => {
       if (!user) {
         navigate('/login');
@@ -16,19 +17,63 @@ function Boards() {
     })
   }, [getUser, navigate]);
 
+  useEffect(() => {
+    const getBoards = async () => {
+      try {
+        const userToken = await getUser()?.then((user) => {
+          return user?.getIdToken();
+        });
+
+        const response = await fetch(`${backendUrl}/boards`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        });
+
+        const json = await response.json();
+        setBoards(Object.entries(json));
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    getBoards();
+  }, [getUser, backendUrl]);
+
   const style = {
-    container: 'flex flex-col items-center',
-    content: 'gap-[10%] grid-cols-3 grid w-[80%] justify-center',
+    container: `flex flex-col items-center`,
+    title: `text-5xl font-SpaceGrotesk font-bold text-center pt-20 username-margin`,
+    boardGrid: 'flex flex-wrap justify-center',
+    addIcon: 'fixed bottom-4 right-4',
   };
 
-  // display service cards in a grid with 3 columns
-  return (
-    <>
-      <div className={style.container}>
-        <div className={style.content}>
-        </div>
+  const renderBoardGrid = () => {
+    return (
+      <div className={style.boardGrid}>
+        {boards.map((board) => (
+          <div key={board[0]}>
+            <BoardCard
+              title={board[1].name}
+              description={board[1].description}
+              backgroundColor={board[1].color}
+              onClick={() => navigate(`${board[1].id}`)}
+            />
+          </div>
+        ))}
       </div>
-    </>
+    );
+  };
+
+  return (
+    <div className={style.container}>
+      <p className={style.title}>
+          My boards
+      </p>
+      {renderBoardGrid()}
+      <a href="/add-board" className={style.addIcon}>
+        <img src={add_icon} alt="Add board" className="w-24 h-24" />
+      </a>
+    </div>
   );
 }
 

@@ -18,6 +18,9 @@ import SelectServices from './pages/SelectServices';
 import UpdateServices from './pages/UpdateServices';
 import Profile from './pages/Profile';
 import UpdateSettings from './pages/UpdateSettings';
+import AddBoard from './pages/AddBoard';
+import Board from './pages/Board';
+import ManageBoard from './pages/ManageBoard';
 
 initializeApp(firebaseConfig);
 
@@ -34,6 +37,9 @@ ReactDOM.render(
           <Route path="login" element={<Login />} />
           <Route path="spotify-callback" element={<Spotify />} />
           <Route path="boards" element={<Boards />} />
+          <Route path="add-board" element={<AddBoard />} />
+          <Route path="boards/:boardId" element={<Board />} />
+          <Route path="manage-board/:boardId" element={<ManageBoard />} />
           <Route path="profile" element={<Profile />} />
           <Route path="update-settings" element={<UpdateSettings />} />
           <Route path="/" element={<Home />} />

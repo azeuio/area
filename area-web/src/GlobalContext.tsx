@@ -1,6 +1,5 @@
 import { Auth, User, getAuth } from 'firebase/auth';
-import React from 'react';
-import { createContext } from 'react';
+import React, { createContext } from 'react';
 
 type GlobalContextType = {
   readonly backendUrl: string;
@@ -19,12 +18,10 @@ export const defaultGlobalContext: GlobalContextType = {
 
 const GlobalContext = createContext<GlobalContextType>({} as GlobalContextType);
 
-// export const GlobalContextProvider = GlobalContext.Provider;
-
-// export const GlobalContextConsumer = GlobalContext.Consumer;
-
 // component to be used in the root of the app to get access to global context
-export function GlobalContextProvider(props: { children: React.ReactNode }) {
+export function GlobalContextProvider(props: {
+  readonly children: React.ReactNode;
+}) {
   const auth = getAuth();
   const globalContextValues: GlobalContextType = React.useMemo(() => {
     return {
