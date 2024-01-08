@@ -55,7 +55,7 @@ class AuthenticationService {
       if (context.mounted) {
         showAlertDialog(
           context,
-          "Error",
+          "Info",
           "Your account has been created, please verify your email.",
         );
         Navigator.push(
@@ -110,7 +110,7 @@ class AuthenticationService {
       if (context.mounted) {
         showAlertDialog(
           context,
-          "Error",
+          "Info",
           "Your account has been created.",
         );
         Navigator.push(
@@ -248,7 +248,7 @@ class AuthenticationService {
       if (context.mounted) {
         showAlertDialog(
           context,
-          "Error",
+          "Info",
           "If you have an account, you should have received an email to reset your password.",
         );
       }
