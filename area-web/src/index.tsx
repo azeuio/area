@@ -37,7 +37,9 @@ ReactDOM.render(
           <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="register" element={<Register />} />
           <Route path="login" element={<Login />} />
-          <Route path="spotify-callback" element={<Spotify />} />
+          <Route path="redirect/spotify" element={<Spotify />} />
+          <Route path="redirect/gmail" element={<Spotify />} />
+          <Route path="redirect/get-auth-code" element={<Spotify />} />
           <Route path="boards" element={<Boards />} />
           <Route path="add-board" element={<AddBoard />} />
           <Route path="boards/:boardId" element={<Board />} />

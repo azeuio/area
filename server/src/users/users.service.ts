@@ -38,4 +38,27 @@ export class UsersService {
   async remove(id: string) {
     return this.auth.unregister(id);
   }
+
+  async setCredential(
+    id: string,
+    serviceId: string,
+    credentials: object,
+  ): Promise<void> {
+    this.database.setData(
+      this.database.usersRefId + '/' + id + '/credentials/' + serviceId,
+      credentials,
+    );
+  }
+
+  async getCredential(id: string, serviceId: string): Promise<object> {
+    return this.database.getData<object>(
+      this.database.usersRefId + '/' + id + '/credentials/' + serviceId,
+    );
+  }
+
+  async removeCredential(id: string, serviceId: string): Promise<void> {
+    this.database.removeData(
+      this.database.usersRefId + '/' + id + '/credentials/' + serviceId,
+    );
+  }
 }

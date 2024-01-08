@@ -7,9 +7,10 @@ import { DatabaseModule } from '../firebase/database/database.module';
 import { ServicesService } from './services.service';
 import { BoardsModule } from '../boards/boards.module';
 import { UsersModule } from '../users/users.module';
+import { GmailService } from './gmail/gmail.service';
 
 @Module({
-  providers: [SpotifyService, ServicesService],
+  providers: [SpotifyService, ServicesService, GmailService],
   imports: [
     ConfigModule,
     AuthModule,

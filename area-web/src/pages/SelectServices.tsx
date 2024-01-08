@@ -41,7 +41,7 @@ function ServicesPage() {
       }
     };
     fetchServices();
-  }, []);
+  }, [getUser]);
 
   function numericColorToHex(numericColor: number) {
     const hexColor = `#${numericColor.toString(16).slice(2).toUpperCase()}`;

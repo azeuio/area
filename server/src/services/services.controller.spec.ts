@@ -6,6 +6,7 @@ import { DatabaseService } from '../firebase/database/database.service';
 import { BoardsService } from '../boards/boards.service';
 import { UsersService } from '../users/users.service';
 import { SpotifyService } from './spotify/spotify.service';
+import { GmailService } from './gmail/gmail.service';
 
 const mockConfigService = () => ({
   get: jest.fn(),
@@ -51,6 +52,15 @@ const mockSpotifyService = () => ({
   unregister: jest.fn(),
 });
 
+const mockGmailService = () => ({
+  getUidFromRequest: jest.fn(),
+  getUidFromToken: jest.fn(),
+  genereteEmailVerificationLink: jest.fn(),
+  register: jest.fn(),
+  createUser: jest.fn(),
+  unregister: jest.fn(),
+});
+
 describe('ServicesController', () => {
   let controller: ServicesController;
 
@@ -64,6 +74,7 @@ describe('ServicesController', () => {
         BoardsService,
         UsersService,
         SpotifyService,
+        GmailService,
       ],
     })
       .overrideProvider(ConfigService)
@@ -78,6 +89,8 @@ describe('ServicesController', () => {
       .useValue(mockUsersService)
       .overrideProvider(SpotifyService)
       .useValue(mockSpotifyService)
+      .overrideProvider(GmailService)
+      .useValue(mockGmailService)
       .compile();
 
     controller = module.get<ServicesController>(ServicesController);

@@ -16,6 +16,9 @@ import {
   AreaRestarted,
   AreaInterupt,
 } from './interupts/interupt';
+import { GmailService } from './gmail/gmail.service';
+import { Credentials } from 'google-auth-library';
+import { gmail_v1 } from 'googleapis';
 
 type AreaWithId = Area & { id: string };
 type ActionWithId = Action & { id: string };
@@ -60,17 +63,20 @@ export class ServicesService {
   actions: Map<string, Action> = new Map();
   private readonly actionsIsTriggeredDelegates: Record<string, TriggerDelegate>;
   private readonly actionDelegates: Record<string, ActionDelegate>;
+  private areasProcessingLoop: Promise<void>;
 
   constructor(
     private readonly database: DatabaseService,
     private readonly boardsService: BoardsService,
     private readonly spotifyService: SpotifyService,
+    private readonly gmailService: GmailService,
     private readonly usersService: UsersService,
   ) {
     // timeout to wait for dependencies to load
     this.actionsIsTriggeredDelegates = {
       spotify001: this.triggerSongPlayingTriggered.bind(this),
       general_timer: this.triggerTimer.bind(this),
+      gmail_email_received: this.triggerGmailNewEmailTriggered.bind(this),
     };
     this.actionDelegates = {
       spotify002: this.actionSpotifySetPlayerVolume.bind(this),
@@ -79,16 +85,14 @@ export class ServicesService {
       general_strcat: this.actionStrcat.bind(this),
       general_join: this.actionJoin.bind(this),
       general_atomize: this.actionAtomize.bind(this),
+      gmail_send: this.actionGmailSendEmail.bind(this),
     };
     setTimeout(() => {
       this.database
         .getData<any>(this.database.actionsRefId)
-        .then((actions: Record<string, Action>) => {
+        .then(async (actions: Record<string, Action>) => {
           this.actions = new Map(Object.entries(actions));
-          // call processServices every 5 seconds
-          setInterval(() => {
-            this.processAreas();
-          }, this.UPDATE_INTERVAL * 1000);
+          this.areasProcessingLoop = this.processAreas();
         })
         .catch((e) => {
           console.log('Failed to get actions', e);
@@ -123,6 +127,11 @@ export class ServicesService {
             delete this.areasBeingProcessed[area.id];
           });
       });
+    setTimeout(() => {
+      this.areasProcessingLoop.then(() => {
+        this.areasProcessingLoop = this.processAreas();
+      });
+    }, this.UPDATE_INTERVAL * 1000);
   }
 
   async processArea(area: AreaWithId, trigger: ActionWithId) {
@@ -286,7 +295,7 @@ export class ServicesService {
     const owner = await this.usersService.findOne(board.owner_id).catch(() => {
       throw new AreaFailed(area, null, 'No owner');
     });
-    return [owner];
+    return [{ ...owner, id: board.owner_id }];
   }
 
   //// vv Actions logic vv ////
@@ -504,5 +513,106 @@ export class ServicesService {
   };
 
   /// ^^ Spotify ^^ ///
+  /// vv Gmail vv ///
+  async getGmailToken(owner: User): Promise<Credentials> {
+    if (!owner.credentials) {
+      return;
+    }
+    if (!owner.credentials['gmail']?.token) {
+      return;
+    }
+    return await this.gmailService.refreshToken(
+      owner.credentials['gmail'].token,
+    );
+  }
+
+  private getAllTextParts(mailParts?: gmail_v1.Schema$MessagePart[]) {
+    const textParts: string[] = [];
+    mailParts?.forEach((part) => {
+      if (part.mimeType.startsWith('multipart/')) {
+        let p = part.parts.findIndex((p) => p.mimeType == 'text/html');
+        if (p != -1) part = part.parts[p];
+        else {
+          p = part.parts.findIndex((p) => p.mimeType == 'text/plain');
+          if (p != -1) part = part.parts[p];
+          else throw new AreaFailed(null, null, 'could not find mail body');
+        }
+      }
+      if (part.mimeType === 'text/html') {
+        textParts.push(
+          this.gmailService.htmlToText(
+            Buffer.from(part.body.data, 'base64').toString(),
+          ),
+        );
+      } else if (part.mimeType === 'text/plain') {
+        textParts.push(Buffer.from(part.body.data, 'base64').toString());
+      }
+    });
+    return textParts;
+  }
+
+  private triggerGmailNewEmailTriggered: TriggerDelegate = async (
+    users,
+    self,
+    area,
+    _options,
+  ) => {
+    const owner = users[0];
+    const token = await this.getGmailToken(owner);
+    if (!token) {
+      throw new AreaCancelled(area, self, 'No gmail token');
+    }
+    const messages = await this.gmailService.getMessages(token.access_token);
+    const lastMessageId = messages.messages[0].id;
+    const lastMessage = await this.gmailService.getMessage(
+      token.access_token,
+      lastMessageId,
+    );
+    const date = new Date(parseInt(lastMessage.internalDate));
+    const timeSinceReceived = (new Date().getTime() - date.getTime()) / 1000;
+    if (timeSinceReceived >= this.UPDATE_INTERVAL * 1.2) {
+      throw new AreaCancelled(area, self, 'Not triggered');
+    }
+    try {
+      const body = this.getAllTextParts(lastMessage.payload.parts).join();
+      const subject = lastMessage.payload.headers.find(
+        (h) => h.name === 'Subject',
+      ).value;
+      const from = lastMessage.payload.headers.find(
+        (h) => h.name === 'From',
+      ).value;
+      return [body, subject, from];
+    } catch (e) {
+      throw new e.constructor(area, self, e.reason);
+    }
+  };
+
+  private actionGmailSendEmail: ActionDelegate = async (
+    users,
+    trigger,
+    self,
+    area,
+    options,
+    body?: string,
+    subject?: string,
+    to?: string,
+  ) => {
+    const owner = users[0];
+    const token = await this.getGmailToken(owner);
+    body = options?.body ?? body;
+    subject = options?.subject ?? subject;
+    to = options?.to ?? to;
+    if (!token) {
+      return [body, subject, to];
+    }
+    const res = await this.gmailService.sendMessage(
+      token.access_token,
+      body,
+      to,
+      subject,
+    );
+    return [body, subject, to, res.id];
+  };
+  /// ^^ Gmail ^^ ///
   //// ^^ Actions logic ^^ ////
 }

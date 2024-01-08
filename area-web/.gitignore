@@ -26,3 +26,5 @@ yarn-error.log*
 dependencygraph.svg
 
 firebaseConfig.json
+
+*.env

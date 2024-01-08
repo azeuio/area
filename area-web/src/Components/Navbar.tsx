@@ -22,7 +22,7 @@ function Navbar(props: NavbarProps) {
     '/add-board',
     '/manage-board/:boardId',
     '/boards/:boardId',
-    '/update-settings'
+    '/update-settings',
     '/link-reaction/:actionid',
   ];
   const [isLogged, setIsLogged] = React.useState(

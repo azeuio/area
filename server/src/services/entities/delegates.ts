@@ -7,14 +7,14 @@ type AreaWithId = Area & { id: string };
 type ActionOptions = { restartCount: number } & Record<string, any>;
 
 export type TriggerDelegate = (
-  users: User[],
+  users: (User & { id: string })[],
   self: ActionWithId,
   area: AreaWithId,
   options?: Record<string, any>,
 ) => Promise<any[]>;
 
 export type ActionDelegate = (
-  users: User[],
+  users: (User & { id: string })[],
   trigger: ActionWithId,
   self: ActionWithId,
   area: AreaWithId,
