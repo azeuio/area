@@ -25,10 +25,16 @@ function ServicesPage() {
           Services
         </p>
         <ul className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-10 place-items-center">
-            <SpotifyServiceCard />
+          <SpotifyServiceCard />
         </ul>
-        <div className='fixed bottom-14 right-36'>
-            <CTA buttonText="Validate" buttonStyle="bg-[#34A853] text-white text-5xl px-16" onClick={() => {navigate('/profile')}}/>
+        <div className="fixed bottom-14 right-36">
+          <CTA
+            buttonText="Validate"
+            buttonStyle="bg-[#34A853] text-white text-5xl px-16"
+            onClick={() => {
+              navigate('Maghreb');
+            }}
+          />
         </div>
       </div>
     </div>

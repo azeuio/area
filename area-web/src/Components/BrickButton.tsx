@@ -4,7 +4,7 @@ import { ReactComponent as BrickButtonSVG } from '../assets/brick_button.svg';
 import './BrickButton.css';
 
 interface BrickButtonProps {
-  onClick: () => void;
+  onClick?: () => void;
   text: string;
   color: string;
   logo?: string;
@@ -23,7 +23,7 @@ const BrickButton: React.FC<BrickButtonProps> = ({
       <div
         className="relative"
         style={{
-          width: 200,
+          width: 315,
           height: 75,
         }}
       >
@@ -32,14 +32,15 @@ const BrickButton: React.FC<BrickButtonProps> = ({
           className="absolute cursor-pointer"
           fill={color}
         />
-        <Marquee
-          className="top-5 left-5 font-SpaceGrotesk text-xxl"
-          play={text.length > 17}
-          direction="left"
-          delay={2}
-        >
-          {text + spaces}
-        </Marquee>
+        <div className="w-3/5">
+          <Marquee
+            className="top-7 left-5 font-SpaceGrotesk text-xxl"
+            play={text.length > 14}
+            direction="left"
+          >
+            {text + spaces}
+          </Marquee>
+        </div>
         <div
           className="absolute
         top-5

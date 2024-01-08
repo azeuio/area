@@ -16,6 +16,7 @@ import Page404 from './pages/Page404';
 import Navbar from './Components/Navbar';
 import SelectServices from './pages/SelectServices';
 import UpdateServices from './pages/UpdateServices';
+import LinkReaction from './pages/LinkReaction';
 import Profile from './pages/Profile';
 import UpdateSettings from './pages/UpdateSettings';
 import AddBoard from './pages/AddBoard';
@@ -30,6 +31,7 @@ ReactDOM.render(
       <BrowserRouter>
         <Navbar style={{ height: defaultGlobalContext.navbarHeight }} />
         <Routes>
+          <Route path="link-reaction/:actionid" element={<LinkReaction />} />
           <Route path="update-services" element={<UpdateServices />} />
           <Route path="select-services" element={<SelectServices />} />
           <Route path="forgot-password" element={<ForgotPassword />} />

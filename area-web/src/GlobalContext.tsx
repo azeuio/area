@@ -37,6 +37,7 @@ export function GlobalContextProvider(props: {
       auth: auth,
     };
   }, [auth]);
+
   return (
     <GlobalContext.Provider value={globalContextValues}>
       {props.children}
