@@ -28,7 +28,7 @@ function ServicesPage() {
             <SpotifyServiceCard />
         </ul>
         <div className='fixed bottom-14 right-36'>
-            <CTA buttonText="Validate" buttonStyle="bg-[#34A853] text-white text-5xl px-16" onClick={() => {navigate('Maghreb')}}/>
+            <CTA buttonText="Validate" buttonStyle="bg-[#34A853] text-white text-5xl px-16" onClick={() => {navigate('/profile')}}/>
         </div>
       </div>
     </div>

@@ -5,6 +5,7 @@ interface TextInputProps {
   textInputStyle?: string;
   isPassword?: boolean;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  textInputValue?: string;
 }
 
 interface TextInputState {
@@ -30,6 +31,7 @@ class TextInput extends React.Component<TextInputProps, TextInputState> {
             onChange={this.props.onChange}
             className={`rounded-[10px] border-[3px] font-SpaceGrotesk text-4xl px-3 py-3 focus:outline-none ${this.props.textInputStyle}`}
             placeholder={this.props.placeholder}
+            value={this.props.textInputValue}
           />
           <div
             className="absolute right-3 transform -translate-y-1/2 top-1/2 cursor-pointer"
@@ -60,6 +62,7 @@ class TextInput extends React.Component<TextInputProps, TextInputState> {
             onChange={this.props.onChange}
             className={`rounded-[10px] border-[3px] font-SpaceGrotesk text-4xl px-3 py-3 focus:outline-none ${this.props.textInputStyle}`}
             placeholder={this.props.placeholder}
+            value={this.props.textInputValue}
           />
         </div>
       );

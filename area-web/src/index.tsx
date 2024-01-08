@@ -17,6 +17,7 @@ import Navbar from './Components/Navbar';
 import SelectServices from './pages/SelectServices';
 import UpdateServices from './pages/UpdateServices';
 import Profile from './pages/Profile';
+import UpdateSettings from './pages/UpdateSettings';
 
 initializeApp(firebaseConfig);
 
@@ -34,6 +35,7 @@ ReactDOM.render(
           <Route path="spotify-callback" element={<Spotify />} />
           <Route path="boards" element={<Boards />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="update-settings" element={<UpdateSettings />} />
           <Route path="/" element={<Home />} />
           <Route path="*" element={<Page404 />} />
         </Routes>

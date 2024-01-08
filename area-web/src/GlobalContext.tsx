@@ -40,14 +40,6 @@ export function GlobalContextProvider(props: { children: React.ReactNode }) {
       auth: auth,
     };
   }, [auth]);
-
-  React.useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      console.log('hello du bateau', user, !!user);
-    });
-    return unsubscribe;
-  }, [auth]);
-
   return (
     <GlobalContext.Provider value={globalContextValues}>
       {props.children}

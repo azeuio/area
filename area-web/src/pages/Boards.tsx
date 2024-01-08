@@ -13,7 +13,7 @@ function Boards() {
       if (!user) {
         navigate('/login');
       }
-    });
+    })
   }, [getUser, navigate]);
 
   const style = {

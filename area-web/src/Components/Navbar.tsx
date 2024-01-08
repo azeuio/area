@@ -13,15 +13,13 @@ type NavbarProps = {
 };
 function Navbar(props: NavbarProps) {
   const navigate = useNavigate();
-  const loggedInPages = ['/boards', '/areas', '/profile', '/update-services', '/select-services'];
-  const [isLogged, setIsLogged] = React.useState(
-    loggedInPages.includes(window.location.pathname),
-  );
+  const loggedInPages = ['/boards', '/areas', '/profile', '/update-services', '/select-services', '/update-settings']
+  const [isLogged, setIsLogged] = React.useState(loggedInPages.includes(window.location.pathname));
   const height = props.style?.height || '10vh';
 
   React.useEffect(() => {
-    setIsLogged(loggedInPages.includes(window.location.pathname));
-  }, [navigate]);
+    setIsLogged(loggedInPages.includes(window.location.pathname))
+  }, [navigate])
   if (isLogged) {
     return (
       <UserNavbar
