@@ -6,6 +6,26 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 
 class AuthenticationService {
+  void showAlertDialog(BuildContext context, String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> registerWithEmailAndPassword(
     BuildContext context,
     String email,
@@ -20,12 +40,10 @@ class AuthenticationService {
       );
       if (response.statusCode != 201) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                "Error when creating your account, please verify your informations.",
-              ),
-            ),
+          showAlertDialog(
+            context,
+            "Error",
+            "An error happened when creating your account, please verify your informations.",
           );
           return;
         }
@@ -35,12 +53,10 @@ class AuthenticationService {
       final user = FirebaseAuth.instance.currentUser;
       await user?.sendEmailVerification();
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              "Your account has been created, please check your email to verify it.",
-            ),
-          ),
+        showAlertDialog(
+          context,
+          "Error",
+          "Your account has been created, please verify your email.",
         );
         Navigator.push(
           context,
@@ -49,12 +65,10 @@ class AuthenticationService {
       }
     } catch (error) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              "An error happened when creating your account, please try again later.",
-            ),
-          ),
+        showAlertDialog(
+          context,
+          "Error",
+          "An error happened when creating your account, please try again later.",
         );
       }
     }
@@ -85,23 +99,19 @@ class AuthenticationService {
       );
       if (response.statusCode != 200) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                "Error when creating your account, please verify your informations.",
-              ),
-            ),
+          showAlertDialog(
+            context,
+            "Error",
+            "An error happened when creating your account, please verify your informations.",
           );
           return;
         }
       }
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              "Your account has been created.",
-            ),
-          ),
+        showAlertDialog(
+          context,
+          "Error",
+          "Your account has been created.",
         );
         Navigator.push(
           context,
@@ -114,12 +124,10 @@ class AuthenticationService {
       }
     } catch (error) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              "An error happened when creating your account with Google, please try again later.",
-            ),
-          ),
+        showAlertDialog(
+          context,
+          "Error",
+          "An error happened when creating your account, please try again later.",
         );
       }
     }
@@ -129,12 +137,10 @@ class AuthenticationService {
     BuildContext context,
   ) async {
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            "Github register is not available yet.",
-          ),
-        ),
+      showAlertDialog(
+        context,
+        "Error",
+        "Registering with Github is not available yet.",
       );
     }
   }
@@ -149,14 +155,11 @@ class AuthenticationService {
           .signInWithEmailAndPassword(email: email, password: password);
       if (result.user?.emailVerified == false) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                "Your account is not verified, please check your email.",
-              ),
-            ),
+          showAlertDialog(
+            context,
+            "Error",
+            "Your account is not verified, please check your emails.",
           );
-          return;
         }
       }
       if (context.mounted) {
@@ -169,12 +172,10 @@ class AuthenticationService {
       }
     } catch (error) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              "Error when logging in, please verify your informations.",
-            ),
-          ),
+        showAlertDialog(
+          context,
+          "Error",
+          "An error happened when logging in, please verify your informations.",
         );
       }
     }
@@ -215,12 +216,10 @@ class AuthenticationService {
       }
     } catch (error) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              "Error when logging in with Google, please try again later.",
-            ),
-          ),
+        showAlertDialog(
+          context,
+          "Error",
+          "An error happened when logging in with Google, please try again later.",
         );
       }
     }
@@ -230,12 +229,10 @@ class AuthenticationService {
     BuildContext context,
   ) async {
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            "Github login is not available yet.",
-          ),
-        ),
+      showAlertDialog(
+        context,
+        "Error",
+        "Login with Github is not available yet.",
       );
     }
   }
@@ -249,22 +246,18 @@ class AuthenticationService {
         email: email,
       );
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              "If you have an account, you should have received an email to reset your password.",
-            ),
-          ),
+        showAlertDialog(
+          context,
+          "Error",
+          "If you have an account, you should have received an email to reset your password.",
         );
       }
     } catch (error) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              "Error when sending the email, please try again later.",
-            ),
-          ),
+        showAlertDialog(
+          context,
+          "Error",
+          "An error happened when sending the email, please verify your informations.",
         );
       }
     }
