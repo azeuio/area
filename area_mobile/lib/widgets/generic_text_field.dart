@@ -7,6 +7,7 @@ class CustomTextField extends StatefulWidget {
   final TextEditingController controller;
   final TextInputType keyboardType;
   final bool obscureText;
+  final String? initialText;
 
   const CustomTextField({
     Key? key,
@@ -16,6 +17,7 @@ class CustomTextField extends StatefulWidget {
     required this.controller,
     this.keyboardType = TextInputType.text,
     required this.obscureText,
+    this.initialText,
   }) : super(key: key);
 
   @override
@@ -24,6 +26,14 @@ class CustomTextField extends StatefulWidget {
 
 class _CustomTextFieldState extends State<CustomTextField> {
   bool isPasswordVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialText != null) {
+      widget.controller.text = widget.initialText!;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

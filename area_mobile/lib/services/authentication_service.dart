@@ -31,7 +31,7 @@ class AuthenticationService {
     String email,
     String password,
   ) async {
-    String apiUrl = "http://127.0.0.1:8080/auth/register";
+    String apiUrl = "http://10.0.2.2:8080/auth/register";
     try {
       var response = await http.post(
         Uri.parse(apiUrl),
@@ -86,7 +86,7 @@ class AuthenticationService {
         idToken: googleAuth?.idToken,
       );
       await FirebaseAuth.instance.signInWithCredential(credential);
-      String apiUrl = "http://127.0.0.1:8080/auth/create-user";
+      String apiUrl = "http://10.0.2.2:8080/auth/create-user";
       var userToken = await FirebaseAuth.instance.currentUser?.getIdToken();
       var username = googleUser?.displayName;
       var response = await http.post(
@@ -194,7 +194,7 @@ class AuthenticationService {
       );
       var result = await FirebaseAuth.instance.signInWithCredential(credential);
       if (result.additionalUserInfo!.isNewUser == true) {
-        String apiUrl = "http://127.0.0.1:8080/auth/create-user";
+        String apiUrl = "http://10.0.2.2:8080/auth/create-user";
         var userToken = await FirebaseAuth.instance.currentUser?.getIdToken();
         var username = googleUser?.displayName;
         await http.post(
