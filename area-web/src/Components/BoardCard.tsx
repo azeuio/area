@@ -21,12 +21,11 @@ const BoardCard: FC<BoardCardProps> = (props) => {
       className={style.container}
       style={{ backgroundColor: props.backgroundColor }}
     >
-      <button
-        className={style.content}
-        onClick={props.onClick}
-      >
-          <p className={style.title}>{props.title}</p>
-          {hasDescription && <p className={style.description}>{props.description}</p>}
+      <button className={style.content} onClick={props.onClick}>
+        <p className={style.title}>{props.title}</p>
+        {hasDescription && (
+          <p className={style.description}>{props.description}</p>
+        )}
       </button>
     </div>
   );

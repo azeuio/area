@@ -19,7 +19,7 @@ class GetStartedNavbar extends React.Component<GetStartedNavbarProps> {
     const height = this.props.style?.height || '10vh';
     return (
       <div
-        className={`py-7 pl-11 h-[${height}] flex items-center justify-between sticky top-0 z-50 bg-white`}
+        className={`py-7 pl-11 h-[${height}] flex items-center justify-between sticky top-0 z-50 bg-transparent`}
       >
         <a href={this.props.logoLink}>
           <img src={this.props.logo} alt="Area logo" />

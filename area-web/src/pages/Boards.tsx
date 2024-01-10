@@ -14,7 +14,7 @@ function Boards() {
       if (!user) {
         navigate('/login');
       }
-    })
+    });
   }, [getUser, navigate]);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ function Boards() {
       } catch (error) {
         console.log(error);
       }
-    }
+    };
     getBoards();
   }, [getUser, backendUrl]);
 
@@ -66,9 +66,7 @@ function Boards() {
 
   return (
     <div className={style.container}>
-      <p className={style.title}>
-          My boards
-      </p>
+      <p className={style.title}>My boards</p>
       {renderBoardGrid()}
       <a href="/add-board" className={style.addIcon}>
         <img src={add_icon} alt="Add board" className="w-24 h-24" />

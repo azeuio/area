@@ -49,7 +49,10 @@ export class ServicesService {
     const services = await this.findAll();
 
     return Object.entries(services || {})
-      .filter(([_, service]) => user.credentials?.[service.name.toLowerCase()])
+      .filter(
+        ([_, service]) =>
+          user.credentials?.[service.name.toLowerCase().replace(' ', '-')],
+      )
       .map(([id, service]) => Object.assign({ id }, service));
   }
 }

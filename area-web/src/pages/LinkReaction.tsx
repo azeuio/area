@@ -9,6 +9,7 @@ function LinkReaction() {
   const navigate = useNavigate();
   const { getUser } = React.useContext(GlobalContext);
   const { actionid } = useParams() as { actionid: string };
+  const { boardid } = useParams() as { boardid: string };
   const [actionDetails, setActionDetails] = React.useState('NotFound');
   const [actionServiceId, setActionServiceId] = React.useState('NotFound');
   const [actionServicesSpecs, setActionServiceSpecs] = React.useState<any>({});
@@ -42,8 +43,6 @@ function LinkReaction() {
         );
 
         const json = await response.json();
-        console.log(actionid);
-        console.log(json);
         if (response.status === 404) {
           navigate('/boards');
           return;
@@ -114,6 +113,7 @@ function LinkReaction() {
         </p>
         <BrickButton
           color={numericColorToHex(Number(actionServicesSpecs.color))}
+          logo={actionServicesSpecs.logo}
           text={actionDetails}
         />
         <p className="text-center text-6xl w-3/5 font-SpaceGrotesk pt-14 pb-16">
@@ -124,11 +124,13 @@ function LinkReaction() {
             <ServiceCard
               key={service[0]}
               backgroundColor={numericColorToHex(Number(service[1].color))}
-              logo={service[1]}
+              logo={service[1].logo}
               name={service[1].name}
               activated={true}
               onClick={() => {
-                navigate(`/select-reaction/${service[1].id}`);
+                navigate(
+                  `/add-reaction/${boardid}/${actionid}/${service[1].id}`,
+                );
               }}
             />
           ))}

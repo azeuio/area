@@ -22,6 +22,7 @@ import UpdateSettings from './pages/UpdateSettings';
 import AddBoard from './pages/AddBoard';
 import Board from './pages/Board';
 import ManageBoard from './pages/ManageBoard';
+import AddReaction from './pages/AddReaction';
 
 initializeApp(firebaseConfig);
 
@@ -31,7 +32,14 @@ ReactDOM.render(
       <BrowserRouter>
         <Navbar style={{ height: defaultGlobalContext.navbarHeight }} />
         <Routes>
-          <Route path="link-reaction/:actionid" element={<LinkReaction />} />
+          <Route
+            path="link-reaction/:boardid/:actionid"
+            element={<LinkReaction />}
+          />
+          <Route
+            path="add-reaction/:boardid/:actionid/:serviceid"
+            element={<AddReaction />}
+          />
           <Route path="update-services" element={<UpdateServices />} />
           <Route path="select-services" element={<SelectServices />} />
           <Route path="forgot-password" element={<ForgotPassword />} />

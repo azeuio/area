@@ -44,6 +44,9 @@ export class DatabaseService implements OnModuleInit {
 
   async getData<T>(path: string): Promise<T> {
     const dataSnapshot = await this.db.ref(path).once('value');
+    if (!dataSnapshot.exists()) {
+      return null;
+    }
     return dataSnapshot.val();
   }
 

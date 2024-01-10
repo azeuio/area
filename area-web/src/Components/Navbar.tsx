@@ -23,7 +23,8 @@ function Navbar(props: NavbarProps) {
     '/manage-board/:boardId',
     '/boards/:boardId',
     '/update-settings',
-    '/link-reaction/:actionid',
+    '/link-reaction/:boardid/:actionid',
+    '/add-reaction/:boardid/:actionid/:serviceid',
   ];
   const [isLogged, setIsLogged] = React.useState(
     loggedInPages.includes(window.location.pathname),
@@ -34,7 +35,7 @@ function Navbar(props: NavbarProps) {
     const currentPath = window.location.pathname;
     const isLogged = loggedInPages.some((page) => {
       if (page.includes('/:')) {
-        const pattern = new RegExp(`^${page.replace(/:[^/]+/, '[^/]+')}$`);
+        const pattern = new RegExp(`^${page.replace(/:[^/]+/g, '[^/]+')}$`);
         return pattern.test(currentPath);
       } else {
         return page === currentPath;

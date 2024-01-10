@@ -48,9 +48,12 @@ const BrickButton: React.FC<BrickButtonProps> = ({
         w-10
         h-10
         rounded-full
-        bg-white"
+        bg-white
+        flex
+        items-center
+        justify-center"
         >
-          <img className="w-10 h-10 rounded-full" src={logo} alt="logo" />
+          <img className="w-3/4 h-3/4 rounded-full" src={logo} alt="logo" />
         </div>
       </div>
     </div>
