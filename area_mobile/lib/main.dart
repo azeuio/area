@@ -1,4 +1,5 @@
 import 'package:area_mobile/views/boards_view.dart';
+import 'package:area_mobile/views/link_reaction_view.dart';
 import 'package:area_mobile/views/login_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -83,7 +84,9 @@ class _HomePageState extends State<HomePage> {
   Widget _getBody() {
     switch (_selectedIndex) {
       case 0:
-        return const BoardsView();
+        return const LinkReactionView(
+          actionId: "spotify001",
+        );
       case 1:
         return const AreasView();
       case 2:

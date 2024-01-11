@@ -1,5 +1,4 @@
 import 'package:area_mobile/main.dart';
-import 'package:area_mobile/views/profile_view.dart';
 import 'package:area_mobile/widgets/generic_button.dart';
 import 'package:area_mobile/widgets/modal.dart';
 import 'package:firebase_auth/firebase_auth.dart';

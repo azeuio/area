@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:marquee/marquee.dart';
 
 class BrickButton extends StatelessWidget {
@@ -72,7 +73,11 @@ class BrickButton extends StatelessWidget {
                 shape: BoxShape.circle,
                 color: Colors.white,
               ),
-              child: Image.network(logo),
+              child: SvgPicture.network(
+                logo,
+                placeholderBuilder: (context) =>
+                    const CircularProgressIndicator(),
+              ),
             ),
           ),
         ],

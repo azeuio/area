@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ServiceCard extends StatefulWidget {
   final Color color;
@@ -67,8 +68,10 @@ class _ServiceCardState extends State<ServiceCard> {
                         isSelected ? Colors.transparent : Colors.transparent,
                         BlendMode.saturation,
                       ),
-                      child: Image(
-                        image: AssetImage(widget.logoPath),
+                      child: SvgPicture.network(
+                        widget.logoPath,
+                        placeholderBuilder: (context) =>
+                            CircularProgressIndicator(),
                       ),
                     ),
                   ),
