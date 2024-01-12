@@ -8,5 +8,6 @@ import { AuthModule } from 'src/firebase/auth/auth.module';
   controllers: [AreaController],
   providers: [AreaService],
   imports: [DatabaseModule, AuthModule],
+  exports: [AreaService],
 })
 export class AreaModule {}

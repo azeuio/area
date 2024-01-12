@@ -19,6 +19,7 @@ import {
 import { GmailService } from './gmail/gmail.service';
 import { Credentials } from 'google-auth-library';
 import { gmail_v1 } from 'googleapis';
+import { AreaService } from 'src/area/area.service';
 
 type AreaWithId = Area & { id: string };
 type ActionWithId = Action & { id: string };
@@ -75,6 +76,7 @@ export class ServicesService {
   constructor(
     private readonly database: DatabaseService,
     private readonly boardsService: BoardsService,
+    private readonly areaService: AreaService,
     private readonly spotifyService: SpotifyService,
     private readonly gmailService: GmailService,
     private readonly usersService: UsersService,
@@ -297,9 +299,13 @@ export class ServicesService {
   // returns a list because we might want to notify multiple users
   async getConcernedUsers(area: AreaWithId) {
     const board = await this.boardsService.findOne(area.board_id).catch(() => {
+      console.log('Pruning area', area.id, 'because of no board');
+      this.areaService.remove(area.id);
       throw new AreaFailed(area, null, 'No board');
     });
     const owner = await this.usersService.findOne(board.owner_id).catch(() => {
+      console.log('Pruning area', board.id, 'because its board has no owner');
+      this.areaService.remove(area.id);
       throw new AreaFailed(area, null, 'No owner');
     });
     return [{ ...owner, id: board.owner_id }];

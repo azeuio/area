@@ -42,7 +42,7 @@ export class DatabaseService implements OnModuleInit {
     return this.db.ref(path);
   }
 
-  async getData<T>(path: string): Promise<T> {
+  async getData<T>(path: string): Promise<T | null> {
     const dataSnapshot = await this.db.ref(path).once('value');
     if (!dataSnapshot.exists()) {
       return null;

@@ -8,6 +8,7 @@ import { ServicesService } from './services.service';
 import { BoardsModule } from '../boards/boards.module';
 import { UsersModule } from '../users/users.module';
 import { GmailService } from './gmail/gmail.service';
+import { AreaModule } from 'src/area/area.module';
 
 @Module({
   providers: [SpotifyService, ServicesService, GmailService],
@@ -17,6 +18,7 @@ import { GmailService } from './gmail/gmail.service';
     DatabaseModule,
     BoardsModule,
     UsersModule,
+    AreaModule,
   ],
   controllers: [ServicesController],
 })

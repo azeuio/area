@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Req,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { AreaService } from './area.service';
 import { CreateAreaDto } from './dto/create-area.dto';
@@ -66,11 +68,15 @@ export class AreaController {
     summary: 'Get all areas belonging to a board',
     description: 'Returns all areas belonging to a board',
   })
+  @UseGuards(AuthGuardVerifiedEmail)
   async findAll(@Param('boardId') boardId: string, @Req() req: Request) {
-    return this.areaService.findAll(
-      boardId,
-      await this.authService.getUidFromRequest(req),
-    );
+    const uid = await this.authService.getUidFromRequest(req);
+    if (!(await this.areaService.belongsToUser(boardId, uid))) {
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND, {
+        cause: 'Board does not exist or does not belong to the user',
+      });
+    }
+    return this.areaService.findAll(boardId);
   }
 
   @Patch('area/:id')

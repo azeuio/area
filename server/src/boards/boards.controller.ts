@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Req,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
@@ -22,6 +24,7 @@ import {
 import { Request } from 'express';
 import { AuthService } from '../firebase/auth/auth.service';
 import { BoardDto } from './dto/board.dto';
+import { UsersService } from 'src/users/users.service';
 
 @ApiTags('Boards')
 @Controller('boards')
@@ -29,6 +32,7 @@ export class BoardsController {
   constructor(
     private readonly boardsService: BoardsService,
     private readonly authService: AuthService,
+    private readonly usersService: UsersService,
   ) {}
 
   @Post()
@@ -104,12 +108,16 @@ export class BoardsController {
     description:
       'Deletes a board with the given id (only if it belongs to the user)',
   })
+  @UseGuards(AuthGuardVerifiedEmail)
   @ApiResponse({ status: 200, description: 'Board deleted' })
   async remove(@Param('id') id: string, @Req() req: Request) {
-    await this.boardsService.remove(
-      id,
-      await this.authService.getUidFromRequest(req),
-    );
+    const uid = await this.authService.getUidFromRequest(req);
+    if (!(await this.boardsService.belongsToUser(id, uid))) {
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND, {
+        cause: 'Board does not exist or does not belong to the user',
+      });
+    }
+    await this.boardsService.remove(id);
     return 'Board deleted';
   }
 }

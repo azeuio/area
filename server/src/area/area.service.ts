@@ -44,12 +44,29 @@ export class AreaService {
     return ref.key;
   }
 
-  async findAll(boardId: string, uid: string) {
+  async belongsToUser(id: string, uid: string) {
+    const area = await this.db.getData<Area>(`${this.db.areasRefId}/${id}`);
+    if (!area) {
+      return false;
+    }
+    const board = await this.db.getData<Board>(
+      `${this.db.boardsRefId}/${area.board_id}`,
+    );
+    if (!board) {
+      return false;
+    }
+    if (board.owner_id !== uid) {
+      return false;
+    }
+    return true;
+  }
+
+  async findAll(boardId: string) {
     try {
       const board = await this.db.getData<Board>(
         `${this.db.boardsRefId}/${boardId}`,
       );
-      if (board?.owner_id !== uid) {
+      if (board === null) {
         throw new HttpException('Board not found', HttpStatus.NOT_FOUND, {
           cause: 'Board does not exist or does not belong to the user',
         });
