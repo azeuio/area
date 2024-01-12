@@ -33,7 +33,6 @@ const log = (
   const reset = '\x1b[0m';
   const dim = '\x1b[2m';
   const blue = '\x1b[34m';
-  const gray = '\x1b[90m';
   const darkGreen = '\x1b[32m';
   const yellow = '\x1b[33m';
   const red = '\x1b[31m';
@@ -45,13 +44,21 @@ const log = (
         : logLevel === 'error'
           ? red
           : '';
-  console.log(
-    `${logLevelColor}${logLevel.toUpperCase()}[${new Date().toLocaleTimeString()}]:${reset} ` +
-      `${darkGreen}'${origin}'${dim}${
-        details ? gray + '(' + details + ')' : ''
-      }${reset}>`,
-    ...args,
-  );
+  if (details) {
+    console.log(
+      `${logLevelColor}${logLevel.toUpperCase()}[${new Date().toLocaleTimeString()}]:${reset} ` +
+        `${darkGreen}'${origin}'${reset}${dim}(`,
+      details,
+      `)${reset}>`,
+      ...args.map((a) => (typeof a === 'string' ? a : JSON.stringify(a))),
+    );
+  } else {
+    console.log(
+      `${logLevelColor}${logLevel.toUpperCase()}[${new Date().toLocaleTimeString()}]:${reset} ` +
+        `${darkGreen}'${origin}'${reset}>`,
+      ...args.map((a) => (typeof a === 'string' ? a : JSON.stringify(a))),
+    );
+  }
 };
 
 @Injectable()
@@ -282,7 +289,7 @@ export class ServicesService {
     }
     const outputs = this.applyFilters(output, area.action.filters);
     if (!outputs) {
-      throw new AreaFailed(area, self, 'Trigger delegate returned nothing');
+      throw new AreaFailed(area, self, 'Trigger delegate filtered to nothing');
     }
     return outputs;
   }
@@ -530,10 +537,10 @@ export class ServicesService {
     const textParts: string[] = [];
     mailParts?.forEach((part) => {
       if (part.mimeType.startsWith('multipart/')) {
-        let p = part.parts.findIndex((p) => p.mimeType == 'text/html');
+        let p = part.parts.findIndex((p) => p.mimeType == 'text/plain');
         if (p != -1) part = part.parts[p];
         else {
-          p = part.parts.findIndex((p) => p.mimeType == 'text/plain');
+          p = part.parts.findIndex((p) => p.mimeType == 'text/html');
           if (p != -1) part = part.parts[p];
           else throw new AreaFailed(null, null, 'could not find mail body');
         }
@@ -574,16 +581,21 @@ export class ServicesService {
       throw new AreaCancelled(area, self, 'Not triggered');
     }
     try {
-      const body = this.getAllTextParts(lastMessage.payload.parts).join();
-      const subject = lastMessage.payload.headers.find(
-        (h) => h.name === 'Subject',
-      ).value;
-      const from = lastMessage.payload.headers.find(
-        (h) => h.name === 'From',
-      ).value;
+      const body = this.getAllTextParts(lastMessage.payload.parts).join('');
+      const subject =
+        lastMessage.payload.headers.find((h) => h.name === 'Subject')?.value ??
+        'Unknown subject';
+      const from =
+        lastMessage.payload.headers.find((h) => h.name === 'From')?.value ??
+        'Unknown sender';
+      if ('Unknown subject' === subject || 'Unknown sender' === from) {
+        console.error('Failed to parse message', body);
+        throw new AreaFailed(area, self, 'Failed to parse message');
+      }
       return [body, subject, from];
     } catch (e) {
-      throw new e.constructor(area, self, e.reason);
+      console.error('Failed to get message', e);
+      throw new e.constructor(area, self, e.reason ?? 'Failed to get message');
     }
   };
 
@@ -599,9 +611,10 @@ export class ServicesService {
   ) => {
     const owner = users[0];
     const token = await this.getGmailToken(owner);
-    body = options?.body ?? body;
+    body = options?.message ?? body;
     subject = options?.subject ?? subject;
-    to = options?.to ?? to;
+    to = options?.recipient ?? to;
+
     if (!token) {
       return [body, subject, to];
     }
