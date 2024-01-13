@@ -108,8 +108,10 @@ export class BoardsService {
 
   async remove(id: string) {
     const areas = await this.areaService.findAll(id);
-    for (const area of areas) {
-      await this.areaService.remove(area.id);
+    if (areas !== null) {
+      while (areas.length > 0) {
+        await this.areaService.remove(areas.pop().id);
+      }
     }
     await this.db.removeData(`${this.db.boardsRefId}/${id}`);
   }

@@ -49,8 +49,12 @@ export class AreaService {
     if (!area) {
       return false;
     }
+    return await this.boardBelongsToUser(area.board_id, uid);
+  }
+
+  async boardBelongsToUser(boardId: string, uid: string) {
     const board = await this.db.getData<Board>(
-      `${this.db.boardsRefId}/${area.board_id}`,
+      `${this.db.boardsRefId}/${boardId}`,
     );
     if (!board) {
       return false;
@@ -61,7 +65,7 @@ export class AreaService {
     return true;
   }
 
-  async findAll(boardId: string) {
+  async findAll(boardId: string): Promise<(Area & { id: string })[]> {
     try {
       const board = await this.db.getData<Board>(
         `${this.db.boardsRefId}/${boardId}`,

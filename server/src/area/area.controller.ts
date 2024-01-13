@@ -71,7 +71,7 @@ export class AreaController {
   @UseGuards(AuthGuardVerifiedEmail)
   async findAll(@Param('boardId') boardId: string, @Req() req: Request) {
     const uid = await this.authService.getUidFromRequest(req);
-    if (!(await this.areaService.belongsToUser(boardId, uid))) {
+    if (!(await this.areaService.boardBelongsToUser(boardId, uid))) {
       throw new HttpException('Board not found', HttpStatus.NOT_FOUND, {
         cause: 'Board does not exist or does not belong to the user',
       });
