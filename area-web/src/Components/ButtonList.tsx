@@ -2,13 +2,13 @@ import React from 'react';
 
 interface ButtonListProps<T> {
   items: T[];
-  itemRenderer: (item: T) => JSX.Element;
+  itemRenderer: (item: T, idx: number, arr: T[]) => JSX.Element;
   containerStyle?: string;
   itemContainerStyle?: string;
   itemStyle?: string;
-  itemKey: (item: T) => string;
-  itemColor?: (item: T) => string | null;
-  onClick?: (item: T) => void;
+  itemKey: (item: T, idx: number, arr: T[]) => string;
+  itemColor?: (item: T, idx: number, arr: T[]) => string | null;
+  onClick?: (item: T, idx: number, arr: T[]) => void;
 }
 const ButtonList = <T,>({
   items,
@@ -27,17 +27,17 @@ const ButtonList = <T,>({
       <ul
         className={`grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-10 place-items-center pt-20 ${itemContainerStyle}`}
       >
-        {items.map((item) => {
+        {items.map((item, idx, arr) => {
           return (
             <div
-              key={itemKey(item)}
+              key={itemKey(item, idx, arr)}
               className={` ${itemStyle ?? ''} cursor-pointer select-none`}
-              onClick={() => onClick?.(item)}
+              onClick={() => onClick?.(item, idx, arr)}
               style={{
-                backgroundColor: itemColor?.(item) ?? 'gray',
+                backgroundColor: itemColor?.(item, idx, arr) ?? 'gray',
               }}
             >
-              {itemRenderer(item)}
+              {itemRenderer(item, idx, arr)}
             </div>
           );
         })}

@@ -82,12 +82,15 @@ export class AreaService {
       .orderByChild('board_id')
       .equalTo(boardId)
       .once('value');
-    return Object.entries(areas.val() || {}).map(
-      ([id, area]: [string, Area]) => ({
-        id,
-        ...area,
-      }),
-    );
+    return areas.val();
+  }
+
+  async findOne(id: string) {
+    const area = await this.db.getData<Area>(`${this.db.areasRefId}/${id}`);
+    if (!area) {
+      throw new HttpException('Area not found', HttpStatus.NOT_FOUND);
+    }
+    return area;
   }
 
   async update(id: string, updateAreaDto: UpdateAreaDto) {

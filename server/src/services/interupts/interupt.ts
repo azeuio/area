@@ -14,6 +14,8 @@ function areaActingOnActionString(
 
 export class AreaInterupt extends Error {
   public reason?: string = 'Unknown';
+  public area?: Area & { id: string };
+  public action?: Action & { id: string };
   constructor(public message: string) {
     super(message);
     this.name = this.constructor.name;

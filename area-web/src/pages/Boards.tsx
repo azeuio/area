@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import GlobalContext from '../GlobalContext';
 import BoardCard from '../Components/BoardCard';
 import add_icon from '../assets/add_icon.svg';
+import Badge from '../Components/Badge';
 
 function Boards() {
   const navigate = useNavigate();
@@ -68,9 +69,11 @@ function Boards() {
     <div className={style.container}>
       <p className={style.title}>My boards</p>
       {renderBoardGrid()}
-      <a href="/add-board" className={style.addIcon}>
-        <img src={add_icon} alt="Add board" className="w-24 h-24" />
-      </a>
+      <Badge bgColor="white" borderColor="gray-700">
+        <a href={'/add-board'} className="material-symbols-outlined scale-150 ">
+          add
+        </a>
+      </Badge>
     </div>
   );
 }

@@ -79,6 +79,17 @@ export class AreaController {
     return this.areaService.findAll(boardId);
   }
 
+  @Get('area/:id')
+  @UseGuards(AuthGuardVerifiedEmail)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Get an area by id',
+    description: 'Returns an area by id',
+  })
+  async findOne(@Param('id') id: string) {
+    return this.areaService.findOne(id);
+  }
+
   @Patch('area/:id')
   @UseGuards(AuthGuardVerifiedEmail)
   @ApiBearerAuth()

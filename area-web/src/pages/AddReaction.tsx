@@ -1,76 +1,65 @@
 import React from 'react';
-import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import GlobalContext from '../GlobalContext';
 import ServiceModal from '../Components/ServiceModal';
 import DescriptionInput from '../Components/DescriptionInput';
 import Header from '../Components/Header';
 import ButtonList from '../Components/ButtonList';
+import Requester from '../Requester';
+import {
+  ActionDto,
+  AreaDto,
+  AreaOption,
+  CreateAreaDto,
+  ServiceDto,
+  Types,
+  WithId,
+} from '../types';
+import PromiseBuilder from '../Components/PromiseBuilder';
+import Loading from '../Components/Loading';
+import ErrorModal from '../Components/ErrorModal';
 
-type TypesStr = 'string' | 'number' | 'boolean';
-type Types = string | number | boolean;
-
-export interface Option {
-  type: TypesStr;
-  default?: Types;
+interface AddReactionViewProps {
+  readonly data: {
+    readonly accessToken: string;
+    readonly selectedService: ServiceDto;
+    readonly availableActions: ActionDto[];
+    readonly parent?: WithId<AreaDto>;
+  };
 }
-interface ActionInputType {
-  name: string;
-  description: string;
-  type: string;
-  optional: boolean;
-}
-
-interface Action {
-  name: string;
-  description: string;
-  service_id: string;
-  is_a_trigger: boolean;
-  inputs_types?: ActionInputType[]; // i.e. ['string', 'number']
-  outputs_types?: ActionInputType[]; // i.e. ['string', 'number']
-  options?: Record<string, Option>; // i.e. { 'songId': 'value1', 'artistId': 'value2' }
-}
-
-interface Service {
-  name: string;
-  description: string;
-  color: string;
-  logo: string;
-}
-
-function AddReaction() {
+function AddReactionView({
+  data: { accessToken, selectedService, availableActions, parent },
+}: AddReactionViewProps) {
   const navigate = useNavigate();
-  const { getUser } = React.useContext(GlobalContext);
   const { backendUrl } = React.useContext(GlobalContext);
-  const { boardid } = useParams() as { boardid: string };
-  const { actionid } = useParams() as { actionid: string };
-  const { serviceid } = useParams() as { serviceid: string };
+  const { boardid, parentid } = useParams() as {
+    boardid: string;
+    serviceid: string;
+    parentid: string;
+  };
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [selectedService, setSelectedService] =
-    React.useState<Service | null>();
-  const [availableActions, setAvailableActions] = React.useState<Action[]>([]);
-  const [selectedAction, setSelectedAction] = React.useState<Action | null>(
+  const [selectedAction, setSelectedAction] = React.useState<ActionDto | null>(
     null,
   );
   const [editedOptions, setEditedOptions] = React.useState<
     Record<string, Types>
   >({});
-
-  // redirect to login if not logged in
-  React.useEffect(() => {
-    getUser().then((user) => {
-      if (!user) {
-        navigate('/login');
-      }
-    });
-  }, [getUser, navigate]);
+  const [error, setError] = React.useState<{
+    status: number;
+    reason: string;
+    type: string;
+  } | null>(null);
 
   function numericColorToHex(numericColor: number) {
     const hexColor = `#${numericColor.toString(16).slice(2).toUpperCase()}`;
     return hexColor;
   }
 
-  const onOptionChange = (name: string, newValue: Types, option: Option) => {
+  const onOptionChange = (
+    name: string,
+    newValue: Types,
+    option: AreaOption,
+  ) => {
     let verifiedValued: Types = newValue;
 
     if (newValue !== '') {
@@ -90,63 +79,80 @@ function AddReaction() {
     setEditedOptions(newInputValues);
   };
 
+  /* Send request to backend to create a new area */
   const createArea = async () => {
     try {
-      console.log('je sais pas quoi faire ici');
+      const body: CreateAreaDto = {
+        action: {
+          id: selectedAction?.id ?? '',
+          options: editedOptions,
+        },
+        board_id: boardid,
+        parent_id: parentid,
+        child_id: parent?.child_id,
+      };
+      const response = await new Requester()
+        .authorization(accessToken ?? '')
+        .body(body)
+        .post(`${backendUrl}/areas`);
+      if (response.ok) {
+        const id = await response.text();
+        if (parentid) {
+          navigate(`/boards/${boardid}`);
+          return;
+        } else {
+          navigate(`/link-reaction/${boardid}/${id}`);
+          return;
+        }
+      } else {
+        setError({
+          status: response.status,
+          reason: (await response.json()).message,
+          type: response.statusText,
+        });
+      }
     } catch (e) {
       console.log(e);
     }
   };
 
-  useEffect(() => {
-    const fetchActionService = async () => {
-      try {
-        const response = await fetch(`${backendUrl}/services/` + serviceid, {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-        });
+  // useEffect(() => {
+  //   const fetchActionService = async () => {
+  //     try {
+  //       const response = await fetch(`${backendUrl}/services/` + serviceid, {
+  //         method: 'GET',
+  //         headers: {
+  //           Accept: 'application/json',
+  //           'Content-Type': 'application/json',
+  //         },
+  //       });
 
-        const json = await response.json();
-        setSelectedService(json);
-      } catch (e) {
-        console.log(e);
-      }
-    };
+  //       const json = await response.json();
+  //       setSelectedService(json);
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //   };
 
-    const fetchActions = async () => {
-      try {
-        const response = await fetch(
-          `${backendUrl}/actions/from-service/` + serviceid,
-          {
-            method: 'GET',
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
-            },
-          },
-        );
+  //   /* Fetch list of actions we can add */
+  //   const fetchActions = async () => {
+  //     try {
+  //       const response = await new Requester().get(
+  //         `${backendUrl}/actions/from-service/${serviceid}`,
+  //       );
+  //       if (!response.ok) {
+  //         return;
+  //       }
+  //       const json = await response.json();
 
-        const json = await response.json();
-
-        setAvailableActions(json);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-    fetchActionService();
-    fetchActions();
-  }, [serviceid, backendUrl, navigate]);
-
-  const headerStyle = {
-    content: `rounded-xl flex items-center justify-center transition-all duration-300 p-10 gap-1 sm:gap-1 md:gap-3 lg:gap-5 xl:gap-6 2xl:gap-10 pt-24`,
-    text: `text-white font-SpaceGrotesk text-sm sm:text-lg md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl`,
-    iconContainer: `rounded-full bg-[#fff] flex items-center justify-center h-full sm:w-20 sm:h-20 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 2xl:w-34 2xl:h-34`,
-    description:
-      'font-SpaceGrotesk text-center w-full resize-none line-clamp-1',
-  };
+  //       setAvailableActions(json);
+  //     } catch (e) {
+  //       console.error(e);
+  //     }
+  //   };
+  //   fetchActionService();
+  //   fetchActions();
+  // }, [serviceid, backendUrl, navigate]);
 
   return (
     <div className="h-screen absolute top-0">
@@ -157,7 +163,10 @@ function AddReaction() {
         description={selectedService?.description ?? ''}
       />
       <ButtonList
-        items={availableActions.filter((action) => !action.is_a_trigger)}
+        items={availableActions.filter(
+          /* if no parent, this is a trigger */
+          (action) => action.is_a_trigger !== Boolean(parentid),
+        )}
         itemKey={(action) => action.name}
         itemColor={(action) =>
           numericColorToHex(Number(selectedService?.color))
@@ -253,6 +262,12 @@ function AddReaction() {
           </div>
         )}
       />
+      <ErrorModal
+        error={`Error ${error?.status}`}
+        message={error?.reason ?? 'An error occured'}
+        isOpen={error !== null}
+        onClose={() => setError(null)}
+      />
     </div>
   );
 }
@@ -286,5 +301,74 @@ const BooleanField = (props: {
     </span>
   );
 };
+
+function AddReaction() {
+  const { getUser, backendUrl } = React.useContext(GlobalContext);
+  const { boardid, serviceid, parentid } = useParams() as {
+    boardid: string;
+    serviceid: string;
+    parentid: string;
+  };
+
+  return (
+    <PromiseBuilder
+      loading={<Loading />}
+      error={(error) => (
+        <ErrorModal redirect={`/boards/${boardid}`} error={error} />
+      )}
+      promise={async () => {
+        const user = await getUser();
+        if (!user) {
+          throw new Error('Not logged in');
+        }
+        const accessToken = await user.getIdToken();
+        const activeServicesPromise = await new Requester()
+          .authorization(accessToken)
+          .get(`${backendUrl}/services/active`);
+        const selectedServicePromise = await new Requester()
+          .authorization(accessToken)
+          .get(`${backendUrl}/services/${serviceid}`);
+        const availableActionsPromise = await new Requester().get(
+          `${backendUrl}/actions/from-service/${serviceid}`,
+        );
+        const responses = await Promise.all([
+          activeServicesPromise,
+          selectedServicePromise,
+          availableActionsPromise,
+        ]);
+        if (responses.some((response) => !response.ok)) {
+          throw new Error('Error while fetching data');
+        }
+        const [activeServices, selectedService, availableActions] =
+          (await Promise.all(
+            responses.map(async (response) => response.json()),
+          )) as [(ServiceDto & { id: string })[], ServiceDto, ActionDto[]];
+        if (
+          !activeServices ||
+          !activeServices.some((service) => service.id === serviceid)
+        ) {
+          console.log({ activeServices, serviceid });
+
+          throw new Error('Service not activated');
+        }
+        const parentPromise = await new Requester()
+          .authorization(accessToken)
+          .get(`${backendUrl}/areas/area/${parentid}`);
+        const parent = parentPromise.ok
+          ? ((await parentPromise.json()) as WithId<AreaDto>)
+          : undefined;
+        return {
+          accessToken,
+          selectedService,
+          availableActions,
+          parent,
+        };
+      }}
+      builder={(data) => <AddReactionView data={data} />}
+      onFail={console.log}
+      deps={[]}
+    />
+  );
+}
 
 export default AddReaction;

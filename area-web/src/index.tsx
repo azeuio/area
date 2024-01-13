@@ -28,16 +28,28 @@ initializeApp(firebaseConfig);
 
 ReactDOM.render(
   <StrictMode>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+    />
     <GlobalContextProvider>
       <BrowserRouter>
         <Navbar style={{ height: defaultGlobalContext.navbarHeight }} />
         <Routes>
           <Route
-            path="link-reaction/:boardid/:actionid"
+            path="link-reaction/:boardid/:parentid"
             element={<LinkReaction />}
           />
-          <Route
-            path="add-reaction/:boardid/:actionid/:serviceid"
+          <Route /* Adds a trigger */
+            path="add-action/:boardid"
+            element={<LinkReaction />}
+          />
+          <Route /* Adds a trigger */
+            path="add-reaction/:boardid/:serviceid"
+            element={<AddReaction />}
+          />
+          <Route /* Adds a reaction */
+            path="add-reaction/:boardid/:serviceid/:parentid"
             element={<AddReaction />}
           />
           <Route path="update-services" element={<UpdateServices />} />

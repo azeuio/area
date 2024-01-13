@@ -23,6 +23,7 @@ function Navbar(props: NavbarProps) {
     '/manage-board/:boardId',
     '/boards/:boardId',
     '/update-settings',
+    '/add-action/:boardid',
     '/link-reaction/:boardid/:actionid',
     '/add-reaction/:boardid/:actionid/:serviceid',
   ];

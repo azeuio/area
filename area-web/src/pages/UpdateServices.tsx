@@ -4,7 +4,7 @@ import GlobalContext from '../GlobalContext';
 
 import CTA from '../Components/CTA';
 import ToggleableServiceCard from '../Components/ServicesCards/ToggleableServiceCard';
-import { Service } from '../types';
+import { ServiceDto } from '../types';
 import Requester from '../Requester';
 
 function ServicesPage() {
@@ -19,7 +19,9 @@ function ServicesPage() {
       }
     });
   }, [getUser, navigate]);
-  const [services, setServices] = React.useState<Record<string, Service>>({});
+  const [services, setServices] = React.useState<Record<string, ServiceDto>>(
+    {},
+  );
   React.useEffect(() => {
     const fetchServices = async () => {
       try {

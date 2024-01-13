@@ -5,7 +5,7 @@ import createPopupGetOAuthCode from './createPopupGetOAuthCode';
 import { User } from 'firebase/auth';
 import Requester from '../../Requester';
 
-import { Service } from '../../types';
+import { ServiceDto } from '../../types';
 
 interface DBUser {
   credentials?: Record<string, any>;
@@ -82,7 +82,7 @@ function ToggleableServiceCard(props: ToggleableServiceCardProps) {
   const [code, setCode] = React.useState('');
   const [serviceToken, setServiceToken] = React.useState<object | null>(null);
   const [user, setUser] = React.useState<User | null>(null);
-  const [service, setService] = React.useState<Service | null>(null);
+  const [service, setService] = React.useState<ServiceDto | null>(null);
   const redirectUri = `${frontendUrl}/redirect/${props.readableId}`;
 
   // get service from backend

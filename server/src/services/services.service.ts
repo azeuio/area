@@ -101,12 +101,35 @@ export class ServicesService {
         .getData<any>(this.database.actionsRefId)
         .then(async (actions: Record<string, Action>) => {
           this.actions = new Map(Object.entries(actions));
-          this.areasProcessingLoop = this.processAreas();
+          this.areasProcessingLoop = this.processAreas().catch(
+            this.handleError,
+          );
         })
         .catch((e) => {
           console.log('Failed to get actions', e);
         });
     }, 0);
+  }
+
+  private handleError(e: any) {
+    let reason: string | undefined;
+    let area: AreaWithId | undefined;
+    let action: ActionWithId | undefined;
+    if (e instanceof AreaInterupt) {
+      reason = e.reason;
+      area = e.area;
+      action = e.action;
+    } else {
+      reason = e.message;
+    }
+    log(
+      'Error',
+      reason,
+      'error',
+      e.message,
+      (area ? 'area:' + area.id : '') + (action ? 'action:' + action.id : ''),
+    );
+    console.error(e);
   }
 
   // Tries to trigger every area that has a trigger and a reaction
@@ -131,6 +154,7 @@ export class ServicesService {
           ...this.actions.get(area.action.id),
           id: area.action.id,
         })
+          .catch(this.handleError)
           /* and remove it from the being processed list when done */
           .finally(() => {
             delete this.areasBeingProcessed[area.id];
@@ -138,7 +162,7 @@ export class ServicesService {
       });
     setTimeout(() => {
       this.areasProcessingLoop.then(() => {
-        this.areasProcessingLoop = this.processAreas();
+        this.areasProcessingLoop = this.processAreas().catch(this.handleError);
       });
     }, this.UPDATE_INTERVAL * 1000);
   }
@@ -564,6 +588,7 @@ export class ServicesService {
     return textParts;
   }
 
+  private lastTriggeredId: Record<string, { time: number; id: string }> = {};
   private triggerGmailNewEmailTriggered: TriggerDelegate = async (
     users,
     self,
@@ -575,17 +600,31 @@ export class ServicesService {
     if (!token) {
       throw new AreaCancelled(area, self, 'No gmail token');
     }
-    const messages = await this.gmailService.getMessages(token.access_token);
-    const lastMessageId = messages.messages[0].id;
+    const messages = await this.gmailService.getMessages(token.access_token, 1);
+    const lastMessageId = messages.messages[0]?.id;
     const lastMessage = await this.gmailService.getMessage(
       token.access_token,
       lastMessageId,
     );
     const date = new Date(parseInt(lastMessage.internalDate));
-    const timeSinceReceived = (new Date().getTime() - date.getTime()) / 1000;
-    if (timeSinceReceived >= this.UPDATE_INTERVAL * 1.2) {
-      throw new AreaCancelled(area, self, 'Not triggered');
+    if (!this.lastTriggeredId[users[0].id]) {
+      this.lastTriggeredId[users[0].id] = {
+        time: date.getTime(),
+        id: lastMessageId,
+      };
+      const timeSinceReceived = (new Date().getTime() - date.getTime()) / 1000;
+      if (timeSinceReceived >= this.UPDATE_INTERVAL * 1.2) {
+        throw new AreaCancelled(area, self, 'Not triggered');
+      }
+    } else {
+      if (this.lastTriggeredId[users[0].id].id === lastMessageId) {
+        throw new AreaCancelled(area, self, 'Not triggered');
+      }
     }
+    this.lastTriggeredId[users[0].id] = {
+      time: date.getTime(),
+      id: lastMessageId,
+    };
     try {
       const body = this.getAllTextParts(lastMessage.payload.parts).join('');
       const subject =

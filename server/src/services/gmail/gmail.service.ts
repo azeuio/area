@@ -58,14 +58,20 @@ export class GmailService {
     return tokens;
   }
 
-  async getMessages(token: string) {
+  async getMessages(token: string, num: number = 10) {
     const oauth2Client = new google.auth.OAuth2(
       this.clientID,
       this.clientSecret,
     );
     oauth2Client.setCredentials({ access_token: token });
     const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
-    const res = await gmail.users.messages.list({ userId: 'me' });
+    // get from INBOX and ignore messages being written
+    const res = await gmail.users.messages.list({
+      userId: 'me',
+      maxResults: num,
+      q: 'in:inbox -in:draft',
+      labelIds: ['INBOX'],
+    });
     return res.data;
   }
 
@@ -76,7 +82,10 @@ export class GmailService {
     );
     oauth2Client.setCredentials({ access_token: token });
     const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
-    const res = await gmail.users.messages.get({ userId: 'me', id: id });
+    const res = await gmail.users.messages.get({
+      userId: 'me',
+      id: id,
+    });
     return res.data;
   }
 

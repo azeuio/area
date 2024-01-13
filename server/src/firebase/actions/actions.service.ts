@@ -44,7 +44,10 @@ export class ActionsService {
     const snapshot = await actions.once('value');
     const value: Action[] | null = snapshot.val();
     if (value) {
-      return Object.values(value);
+      return Object.entries(value).map(([id, action]: [string, Action]) => ({
+        id,
+        ...action,
+      }));
     }
     return [];
   }

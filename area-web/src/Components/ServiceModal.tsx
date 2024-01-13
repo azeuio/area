@@ -1,5 +1,5 @@
 import React from 'react';
-import { Option } from '../pages/AddReaction';
+import { AreaOption } from '../types';
 
 interface ServiceModalProps {
   isOpen: boolean;
@@ -9,8 +9,8 @@ interface ServiceModalProps {
   className?: string;
   title: string;
   description?: string;
-  options?: Record<string, Option>;
-  optionRenderer?: (option: Option, key: string) => React.ReactNode;
+  options?: Record<string, AreaOption>;
+  optionRenderer?: (option: AreaOption, key: string) => React.ReactNode;
 }
 
 const ServiceModal: React.FC<ServiceModalProps> = ({
