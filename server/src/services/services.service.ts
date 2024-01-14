@@ -601,6 +601,9 @@ export class ServicesService {
       throw new AreaCancelled(area, self, 'No gmail token');
     }
     const messages = await this.gmailService.getMessages(token.access_token, 1);
+    if (!messages.messages?.length) {
+      throw new AreaCancelled(area, self, 'No messages');
+    }
     const lastMessageId = messages.messages[0]?.id;
     const lastMessage = await this.gmailService.getMessage(
       token.access_token,
