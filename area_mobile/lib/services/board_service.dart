@@ -101,7 +101,7 @@ Future<BoardUpdateStatus> tryUpdateBoard(User? user, String backendUrl, String b
 
   try {
     http.Response response = await http.patch(
-      Uri.parse('$backendUrl/boards/${boardId}'),
+      Uri.parse('$backendUrl/boards/$boardId'),
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',

@@ -35,7 +35,7 @@ class BrickButton extends StatelessWidget {
             ),
           ),
           Positioned(
-            left: 20,
+            left: 50,
             top: 25,
             child: text.length < 17
                 ? Text(
@@ -64,19 +64,18 @@ class BrickButton extends StatelessWidget {
                   ),
           ),
           Positioned(
-            right: 40,
+            right: 50,
             top: 15,
-            child: Container(
-              width: 50,
-              height: 50,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
+            child: ClipOval(
+              child: Container(
+                width: 50,
+                height: 50,
                 color: Colors.white,
-              ),
-              child: SvgPicture.network(
-                logo,
-                placeholderBuilder: (context) =>
-                    const CircularProgressIndicator(),
+                child: SvgPicture.network(
+                  logo,
+                  placeholderBuilder: (context) => const CircularProgressIndicator(),
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
           ),

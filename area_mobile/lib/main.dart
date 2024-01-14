@@ -84,9 +84,7 @@ class _HomePageState extends State<HomePage> {
   Widget _getBody() {
     switch (_selectedIndex) {
       case 0:
-        return const LinkReactionView(
-          actionId: "spotify001",
-        );
+        return const BoardsView();
       case 1:
         return const AreasView();
       case 2:

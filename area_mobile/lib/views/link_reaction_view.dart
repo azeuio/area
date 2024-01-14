@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:area_mobile/constants.dart';
+import 'package:area_mobile/views/select_action_from_service_view.dart';
 import 'package:area_mobile/widgets/brick_button.dart';
 import 'package:area_mobile/widgets/modal.dart';
 import 'package:area_mobile/widgets/service_card.dart';
@@ -10,7 +10,13 @@ import 'package:http/http.dart' as http;
 
 class LinkReactionView extends StatefulWidget {
   final String actionId;
-  const LinkReactionView({Key? key, required this.actionId}) : super(key: key);
+  final String boardId;
+
+  const LinkReactionView({
+    Key? key,
+    required this.actionId,
+    required this.boardId,
+  }) : super(key: key);
 
   @override
   State<LinkReactionView> createState() => _LinkReactionViewState();
@@ -34,7 +40,7 @@ class _LinkReactionViewState extends State<LinkReactionView> {
   }
 
   Future<void> displayServices() async {
-    String apiUrl = "${AppConstants.apiUrl}/services/active";
+    String apiUrl = "http://10.0.2.2:8080/services/active";
     var userToken = await FirebaseAuth.instance.currentUser?.getIdToken();
 
     var result = await http.get(Uri.parse(apiUrl), headers: {
@@ -50,7 +56,14 @@ class _LinkReactionViewState extends State<LinkReactionView> {
           name: service["name"],
           logoPath: service["logo"],
           colored: true,
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SelectActionFromService(boardId: widget.boardId, serviceId: service["id"] , isATrigger: false, triggerId: widget.actionId),
+              ),
+            );
+          },
         );
       }).toList();
 
@@ -69,7 +82,7 @@ class _LinkReactionViewState extends State<LinkReactionView> {
   }
 
   Future<void> displayAction(String actionId) async {
-    String apiUrl = "${AppConstants.apiUrl}/actions/$actionId";
+    String apiUrl = "http://10.0.2.2:8080/actions/$actionId";
 
     var result = await http.get(Uri.parse(apiUrl), headers: {
       'Content-Type': 'application/json',
@@ -78,7 +91,7 @@ class _LinkReactionViewState extends State<LinkReactionView> {
     if (result.statusCode == 200) {
       dynamic actionData = json.decode(result.body);
       String serviceId = actionData["service_id"];
-      String serviceApiUrl = "${AppConstants.apiUrl}/services/$serviceId";
+      String serviceApiUrl = "http://10.0.2.2:8080/services/$serviceId";
 
       var response = await http.get(Uri.parse(serviceApiUrl), headers: {
         'Content-Type': 'application/json',
@@ -109,6 +122,9 @@ class _LinkReactionViewState extends State<LinkReactionView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Choose a service'),
+      ),
         resizeToAvoidBottomInset: false,
         body: SingleChildScrollView(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
