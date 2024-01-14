@@ -58,6 +58,7 @@ ReactDOM.render(
           <Route path="register" element={<Register />} />
           <Route path="login" element={<Login />} />
           <Route path="redirect/spotify" element={<Spotify />} />
+          <Route path="redirect/deezer" element={<Spotify />} />
           <Route path="redirect/gmail" element={<Spotify />} />
           <Route path="redirect/get-auth-code" element={<Spotify />} />
           <Route path="boards" element={<Boards />} />

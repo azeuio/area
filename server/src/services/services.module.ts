@@ -9,9 +9,10 @@ import { BoardsModule } from '../boards/boards.module';
 import { UsersModule } from '../users/users.module';
 import { GmailService } from './gmail/gmail.service';
 import { AreaModule } from 'src/area/area.module';
+import { DeezerService } from './deezer/deezer.service';
 
 @Module({
-  providers: [SpotifyService, ServicesService, GmailService],
+  providers: [SpotifyService, ServicesService, GmailService, DeezerService],
   imports: [
     ConfigModule,
     AuthModule,

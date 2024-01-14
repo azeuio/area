@@ -3,6 +3,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SpotifyService } from './spotify/spotify.service';
 import { GmailService } from './gmail/gmail.service';
 import GmailTokenDTO from './dto/gmail-token.dto';
+import { DeezerService } from './deezer/deezer.service';
 
 @ApiTags('Services')
 @Controller('services')
@@ -10,6 +11,7 @@ export class ServicesController {
   constructor(
     private readonly spotifyService: SpotifyService,
     private readonly gmailService: GmailService,
+    private readonly deezerService: DeezerService,
   ) {}
 
   //// vv SPOTIFY vv ////
@@ -52,4 +54,26 @@ export class ServicesController {
     return this.gmailService.getToken(code, redirectUri);
   }
   //// ^^ GMAIL ^^ ////
+  //// vv DEEZER vv ////
+  @Get('deezer/auth')
+  @ApiOperation({
+    summary: 'Get Deezer authorization URL',
+    description: 'Returns Deezer authorization URL',
+  })
+  async deezerAuth(@Query('redirect_uri') redirectUri: string) {
+    return this.deezerService.getAuthorizationURL(redirectUri);
+  }
+
+  @Get('deezer/token')
+  @ApiOperation({
+    summary: 'Get Deezer token',
+    description: 'Returns Deezer token',
+  })
+  async deezerToken(
+    @Query('code') code: string,
+    @Query('redirect_uri') redirectUri: string,
+  ) {
+    return this.deezerService.getToken(code, redirectUri);
+  }
+  //// ^^ DEEZER ^^ ////
 }

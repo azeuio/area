@@ -20,6 +20,7 @@ import { GmailService } from './gmail/gmail.service';
 import { Credentials } from 'google-auth-library';
 import { gmail_v1 } from 'googleapis';
 import { AreaService } from 'src/area/area.service';
+import { DeezerService } from './deezer/deezer.service';
 
 type AreaWithId = Area & { id: string };
 type ActionWithId = Action & { id: string };
@@ -80,6 +81,7 @@ export class ServicesService {
     private readonly spotifyService: SpotifyService,
     private readonly gmailService: GmailService,
     private readonly usersService: UsersService,
+    private readonly deezerService: DeezerService,
   ) {
     // timeout to wait for dependencies to load
     this.actionsIsTriggeredDelegates = {
@@ -95,6 +97,7 @@ export class ServicesService {
       general_join: this.actionJoin.bind(this),
       general_atomize: this.actionAtomize.bind(this),
       gmail_send: this.actionGmailSendEmail.bind(this),
+      deezer_create_playlist: this.actionDeezerCreatePlaylist.bind(this),
     };
     setTimeout(() => {
       this.database
@@ -190,7 +193,7 @@ export class ServicesService {
         const firstReactionAction = this.actions.get(firstReaction.action.id);
         await this.executeArea(
           trigger,
-          { ...firstReactionAction, id: trigger.id },
+          { ...firstReactionAction, id: firstReaction.action.id },
           firstReaction,
           res,
           restartCount,
@@ -268,7 +271,11 @@ export class ServicesService {
     const inputs: any[] = this.applyFilters(triggerReturn, area.action.filters);
     const actionDelegate = this.actionDelegates[area.action.id];
     if (!actionDelegate) {
-      throw new AreaFailed(area, trigger, 'No delegate');
+      throw new AreaFailed(
+        area,
+        trigger,
+        'No delegate for action ' + area.action.id,
+      );
     }
     const returnValue = await actionDelegate(
       await this.getConcernedUsers(area),
@@ -601,7 +608,7 @@ export class ServicesService {
       throw new AreaCancelled(area, self, 'No gmail token');
     }
     const messages = await this.gmailService.getMessages(token.access_token, 1);
-    if (!messages.messages?.length) {
+    if (!messages.messages || messages.messages.length === 0) {
       throw new AreaCancelled(area, self, 'No messages');
     }
     const lastMessageId = messages.messages[0]?.id;
@@ -675,5 +682,43 @@ export class ServicesService {
     return [body, subject, to, res.id];
   };
   /// ^^ Gmail ^^ ///
+  /// vv Deezer vv ///
+  getDeezerToken(owner: User): {
+    access_token: string;
+    expires_in: number;
+  } | null {
+    if (!owner.credentials) {
+      return null;
+    }
+    if (!owner.credentials['deezer']?.token) {
+      return null;
+    }
+    return owner.credentials['deezer'].token;
+  }
+
+  async actionDeezerCreatePlaylist(
+    users: User[],
+    trigger: ActionWithId,
+    self: ActionWithId,
+    area: AreaWithId,
+    options: any,
+    title: string,
+  ) {
+    const owner = users[0];
+    const token = await this.getDeezerToken(owner);
+    if (!token) {
+      throw new AreaCancelled(area, self, 'No deezer token');
+    }
+    title = options?.title ?? title;
+    const res = await this.deezerService.createPlaylist(
+      token.access_token,
+      title,
+    );
+    if (!res) {
+      throw new AreaFailed(area, self, 'Failed to create playlist');
+    }
+    return [res.id];
+  }
+  /// ^^ Deezer ^^ ///
   //// ^^ Actions logic ^^ ////
 }
