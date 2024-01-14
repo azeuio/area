@@ -517,7 +517,7 @@ export class ServicesService {
     const track = await this.spotifyService.getUserPlaying(token).catch((e) => {
       console.error('Failed to get user playing', e);
     });
-    if (!track) {
+    if (!track || !track.is_playing) {
       throw new AreaCancelled(area, self, 'No track playing');
     }
     return [
@@ -532,7 +532,7 @@ export class ServicesService {
     trigger,
     self,
     area,
-    _options,
+    options,
     volume: number,
   ) => {
     const owner = users[0];
@@ -540,7 +540,7 @@ export class ServicesService {
     if (!token) {
       return [0];
     }
-    volume = Math.max(0, Math.min(100, volume ?? 100));
+    volume = Math.max(0, Math.min(100, volume));
     const res = await this.spotifyService.setVolume(token, volume);
     if (typeof res !== 'number') {
       console.error('Failed to set volume', res.error);
