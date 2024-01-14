@@ -47,12 +47,15 @@ export class ServicesService {
       this.database.usersRefId + '/' + uid,
     );
     const services = await this.findAll();
+    const adminService = services?.['admin'];
+    console.log('service ', adminService);
 
     return Object.entries(services || {})
       .filter(
         ([_, service]) =>
           user.credentials?.[service.name.toLowerCase().replace(' ', '-')],
       )
-      .map(([id, service]) => Object.assign({ id }, service));
+      .map(([id, service]) => Object.assign({ id }, service))
+      .concat(adminService ? [{ id: 'admin', ...adminService }] : []);
   }
 }

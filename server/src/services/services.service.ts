@@ -149,8 +149,8 @@ export class ServicesService {
       /* that is not being processed */
       .filter((area) => !this.areasBeingProcessed.hasOwnProperty(area.id))
       /* that has both a trigger and a reaction */
-      .filter((area) => this.actions.get(area.action.id))
-      .filter((area) => this.actions.get(area.action.id).is_a_trigger)
+      .filter((area) => this.actions.get(area?.action?.id))
+      .filter((area) => this.actions.get(area.action?.id).is_a_trigger)
       .forEach((area) => {
         /* process the area */
         this.areasBeingProcessed[area.id] = this.processArea(area, {
