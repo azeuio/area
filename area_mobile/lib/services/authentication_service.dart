@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:area_mobile/constants.dart';
 
 class AuthenticationService {
   void showAlertDialog(BuildContext context, String title, String message) {
@@ -31,7 +32,7 @@ class AuthenticationService {
     String email,
     String password,
   ) async {
-    String apiUrl = "http://10.0.2.2:8080/auth/register";
+    String apiUrl = "${AppConstants.apiUrl}/auth/register";
     try {
       var response = await http.post(
         Uri.parse(apiUrl),
@@ -86,7 +87,7 @@ class AuthenticationService {
         idToken: googleAuth?.idToken,
       );
       await FirebaseAuth.instance.signInWithCredential(credential);
-      String apiUrl = "http://10.0.2.2:8080/auth/create-user";
+      String apiUrl = "${AppConstants.apiUrl}/auth/create-user";
       var userToken = await FirebaseAuth.instance.currentUser?.getIdToken();
       var username = googleUser?.displayName;
       var response = await http.post(
@@ -194,7 +195,7 @@ class AuthenticationService {
       );
       var result = await FirebaseAuth.instance.signInWithCredential(credential);
       if (result.additionalUserInfo!.isNewUser == true) {
-        String apiUrl = "http://10.0.2.2:8080/auth/create-user";
+        String apiUrl = "${AppConstants.apiUrl}/auth/create-user";
         var userToken = await FirebaseAuth.instance.currentUser?.getIdToken();
         var username = googleUser?.displayName;
         await http.post(

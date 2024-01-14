@@ -1,3 +1,4 @@
+import 'package:area_mobile/constants.dart';
 import 'package:area_mobile/main.dart';
 import 'package:area_mobile/services/board_service.dart';
 import 'package:area_mobile/services/global_service.dart';
@@ -43,18 +44,24 @@ class _UpdateBoardViewState extends State<UpdateBoardView> {
     Color rgbColor = color.toColor();
     String hexColor = rgbColor.value.toRadixString(16);
     hexColor = '#${hexColor.substring(2, hexColor.length)}';
-    BoardUpdateStatus boardUpdateStatus = await tryUpdateBoard(user, 'http://10.0.2.2:8080',
-        widget.board['id'], boardNameController.text, hexColor);
+    BoardUpdateStatus boardUpdateStatus = await tryUpdateBoard(
+        user,
+        AppConstants.apiUrl,
+        widget.board['id'],
+        boardNameController.text,
+        hexColor);
 
     if (boardUpdateStatus == BoardUpdateStatus.error ||
         boardUpdateStatus == BoardUpdateStatus.notUpdated) {
       if (!context.mounted) {
         return;
       }
-      displayModal(context, BoardUpdateStatus.notUpdated == boardUpdateStatus
-          ? "Board name can't be empty"
-          : "An error occured while updating the board. Please try again later.",
-        () => {});
+      displayModal(
+          context,
+          BoardUpdateStatus.notUpdated == boardUpdateStatus
+              ? "Board name can't be empty"
+              : "An error occured while updating the board. Please try again later.",
+          () => {});
       return;
     }
     if (!context.mounted) {
@@ -66,18 +73,18 @@ class _UpdateBoardViewState extends State<UpdateBoardView> {
         builder: (context) => const HomePage(
           title: 'Boards',
         ),
-        ),
+      ),
     );
   }
 
   Future<void> handleDeleteBoard() async {
-
-    displayModal(context, "Are you sure you want to delete this board?", () async {
+    displayModal(context, "Are you sure you want to delete this board?",
+        () async {
       user = FirebaseAuth.instance.currentUser;
       if (user == null) {
         return;
       }
-      await deleteBoard(user, 'http://10.0.2.2:8080', widget.board['id']);
+      await deleteBoard(user, AppConstants.apiUrl, widget.board['id']);
       if (!context.mounted) {
         return;
       }
@@ -87,10 +94,9 @@ class _UpdateBoardViewState extends State<UpdateBoardView> {
           builder: (context) => const HomePage(
             title: 'Boards',
           ),
-          ),
+        ),
       );
-    }, onCancel: () {
-    });
+    }, onCancel: () {});
   }
 
   @override

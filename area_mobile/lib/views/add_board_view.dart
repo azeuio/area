@@ -1,3 +1,4 @@
+import 'package:area_mobile/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hsvcolor_picker/flutter_hsvcolor_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,24 +21,28 @@ class _AddBoardViewState extends State<AddBoardView> {
   final TextEditingController boardNameController = TextEditingController();
   HSVColor color = HSVColor.fromColor(Colors.blue);
   void onChanged(HSVColor value) => {
-    color = value,
-  };
+        color = value,
+      };
 
   Future<void> handleCreateBoard() async {
     User? user = await getCurrentUser();
     Color rgbColor = color.toColor();
     String hexColor = rgbColor.value.toRadixString(16);
     hexColor = '#${hexColor.substring(2, hexColor.length)}';
-    BoardCreationStatus boardCreationStatus = await tryAddBoard(user ,'http://10.0.2.2:8080', boardNameController.text, hexColor);
+    BoardCreationStatus boardCreationStatus = await tryAddBoard(
+        user, AppConstants.apiUrl, boardNameController.text, hexColor);
 
-    if (boardCreationStatus == BoardCreationStatus.error || boardCreationStatus == BoardCreationStatus.notCreated) {
+    if (boardCreationStatus == BoardCreationStatus.error ||
+        boardCreationStatus == BoardCreationStatus.notCreated) {
       if (!context.mounted) {
         return;
       }
-      displayModal(context, boardCreationStatus == BoardCreationStatus.notCreated ?
-        "Board name can't be empty" :
-        "An error occured while creating the board. Please try again later.",
-        () => {});
+      displayModal(
+          context,
+          boardCreationStatus == BoardCreationStatus.notCreated
+              ? "Board name can't be empty"
+              : "An error occured while creating the board. Please try again later.",
+          () => {});
       return;
     }
     if (!context.mounted) {
@@ -49,7 +54,7 @@ class _AddBoardViewState extends State<AddBoardView> {
         builder: (context) => const HomePage(
           title: 'Boards',
         ),
-        ),
+      ),
     );
   }
 
@@ -80,10 +85,10 @@ class _AddBoardViewState extends State<AddBoardView> {
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
-              ),
+            ),
             PaletteHuePicker(
               onChanged: (value) => super.setState(
-                    () => onChanged(value),
+                () => onChanged(value),
               ),
               color: color,
             ),

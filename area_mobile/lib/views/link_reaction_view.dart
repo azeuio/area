@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:area_mobile/constants.dart';
 import 'package:area_mobile/widgets/brick_button.dart';
 import 'package:area_mobile/widgets/modal.dart';
 import 'package:area_mobile/widgets/service_card.dart';
@@ -33,7 +34,7 @@ class _LinkReactionViewState extends State<LinkReactionView> {
   }
 
   Future<void> displayServices() async {
-    String apiUrl = "http://192.168.122.1:8080/services/active";
+    String apiUrl = "${AppConstants.apiUrl}/services/active";
     var userToken = await FirebaseAuth.instance.currentUser?.getIdToken();
 
     var result = await http.get(Uri.parse(apiUrl), headers: {
@@ -68,7 +69,7 @@ class _LinkReactionViewState extends State<LinkReactionView> {
   }
 
   Future<void> displayAction(String actionId) async {
-    String apiUrl = "http://192.168.122.1:8080/actions/$actionId";
+    String apiUrl = "${AppConstants.apiUrl}/actions/$actionId";
 
     var result = await http.get(Uri.parse(apiUrl), headers: {
       'Content-Type': 'application/json',
@@ -77,7 +78,7 @@ class _LinkReactionViewState extends State<LinkReactionView> {
     if (result.statusCode == 200) {
       dynamic actionData = json.decode(result.body);
       String serviceId = actionData["service_id"];
-      String serviceApiUrl = "http://192.168.122.1:8080/services/$serviceId";
+      String serviceApiUrl = "${AppConstants.apiUrl}/services/$serviceId";
 
       var response = await http.get(Uri.parse(serviceApiUrl), headers: {
         'Content-Type': 'application/json',

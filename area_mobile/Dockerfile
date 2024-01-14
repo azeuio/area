@@ -1,5 +1,5 @@
 # Use a Flutter SDK image
-FROM ghcr.io/cirruslabs/flutter:3.16.3
+FROM ghcr.io/cirruslabs/flutter:3.16.7
 
 # Set the working directory in the container
 WORKDIR /app

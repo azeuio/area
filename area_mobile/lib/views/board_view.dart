@@ -1,3 +1,4 @@
+import 'package:area_mobile/constants.dart';
 import 'package:area_mobile/services/board_service.dart';
 import 'package:area_mobile/services/global_service.dart';
 import 'package:area_mobile/views/update_board_view.dart';
@@ -22,44 +23,43 @@ class _BoardViewState extends State<BoardView> {
     setState(() {
       this.user = user;
     });
-    return getBoard(user, 'http://10.0.2.2:8080', widget.boardId);
+    return getBoard(user, AppConstants.apiUrl, widget.boardId);
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder<dynamic>(
-        future: boardFuture,
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            board = snapshot.data;
-          }
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(board['name']),
-              actions: <Widget>[
-                IconButton(
-                  icon: const Icon(Icons.settings),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => UpdateBoardView(
-                          board: board,
+          future: boardFuture,
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              board = snapshot.data;
+            }
+            return Scaffold(
+              appBar: AppBar(
+                title: Text(board['name']),
+                actions: <Widget>[
+                  IconButton(
+                    icon: const Icon(Icons.settings),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UpdateBoardView(
+                            board: board,
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-          );
-        }
-      ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            );
+          }),
     );
   }
 }

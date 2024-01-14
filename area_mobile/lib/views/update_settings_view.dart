@@ -1,3 +1,4 @@
+import 'package:area_mobile/constants.dart';
 import 'package:area_mobile/main.dart';
 import 'package:area_mobile/widgets/generic_button.dart';
 import 'package:area_mobile/widgets/modal.dart';
@@ -16,7 +17,8 @@ class UpdateSettingsView extends StatefulWidget {
 }
 
 class _UpdateSettingsViewState extends State<UpdateSettingsView> {
-  late Future<Map<String, dynamic>?> userDataFuture = getCurrentUser().then((User? user) {
+  late Future<Map<String, dynamic>?> userDataFuture =
+      getCurrentUser().then((User? user) {
     setState(() {
       this.user = user;
     });
@@ -35,7 +37,8 @@ class _UpdateSettingsViewState extends State<UpdateSettingsView> {
   UpdateSettingStatus passwordStatus = UpdateSettingStatus.notUpdated;
 
   void onEmailModalConfirm() {
-    if (passwordStatus == UpdateSettingStatus.error || emailStatus == UpdateSettingStatus.error) {
+    if (passwordStatus == UpdateSettingStatus.error ||
+        emailStatus == UpdateSettingStatus.error) {
       setState(() {
         emailStatus = UpdateSettingStatus.notUpdated;
       });
@@ -58,7 +61,7 @@ class _UpdateSettingsViewState extends State<UpdateSettingsView> {
   }
 
   void onDeleteAccountModalConfirm() {
-    deleteAccount('http://10.0.2.2:8080', user, context);
+    deleteAccount(AppConstants.apiUrl, user, context);
   }
 
   void onDeleteAccountModalCancel() {
@@ -72,25 +75,36 @@ class _UpdateSettingsViewState extends State<UpdateSettingsView> {
       return;
     }
     String userToken = await user!.getIdToken() as String;
-    await tryUpdateUsername('http://10.0.2.2:8080', userToken, actualUsername, usernameController.text);
-    UpdateSettingStatus actualEmailStatus = await tryUpdateEmail('http://10.0.2.2:8080', userToken, actualEmail, emailController.text);
-    UpdateSettingStatus actualPasswordStatus = await tryUpdatePassword('http://10.0.2.2:8080', actualPasswordController.text, newPasswordController.text);
+    await tryUpdateUsername(AppConstants.apiUrl, userToken, actualUsername,
+        usernameController.text);
+    UpdateSettingStatus actualEmailStatus = await tryUpdateEmail(
+        AppConstants.apiUrl, userToken, actualEmail, emailController.text);
+    UpdateSettingStatus actualPasswordStatus = await tryUpdatePassword(
+        AppConstants.apiUrl,
+        actualPasswordController.text,
+        newPasswordController.text);
 
     emailStatus = actualEmailStatus;
     passwordStatus = actualPasswordStatus;
     if (actualEmailStatus != UpdateSettingStatus.notUpdated ||
-      actualPasswordStatus == UpdateSettingStatus.error) {
-        if (!context.mounted) {
-          return;
-        }
-        if (actualPasswordStatus == UpdateSettingStatus.error) {
-          displayModal(context, "Error when updating your password. Please try again", onPasswordModalConfirm);
-        }
-        if (actualEmailStatus == UpdateSettingStatus.updated) {
-          displayModal(context, actualEmailStatus == UpdateSettingStatus.updated ?
-            "Your email has been updated. Please check your inbox to confirm your new email" :
-            "Error when updating your email. Please try again.", onEmailModalConfirm);
-        }
+        actualPasswordStatus == UpdateSettingStatus.error) {
+      if (!context.mounted) {
+        return;
+      }
+      if (actualPasswordStatus == UpdateSettingStatus.error) {
+        displayModal(
+            context,
+            "Error when updating your password. Please try again",
+            onPasswordModalConfirm);
+      }
+      if (actualEmailStatus == UpdateSettingStatus.updated) {
+        displayModal(
+            context,
+            actualEmailStatus == UpdateSettingStatus.updated
+                ? "Your email has been updated. Please check your inbox to confirm your new email"
+                : "Error when updating your email. Please try again.",
+            onEmailModalConfirm);
+      }
       return;
     }
     if (!context.mounted) {
@@ -102,7 +116,7 @@ class _UpdateSettingsViewState extends State<UpdateSettingsView> {
         builder: (context) => const HomePage(
           title: 'Profile',
         ),
-        ),
+      ),
     );
   }
 
@@ -174,25 +188,26 @@ class _UpdateSettingsViewState extends State<UpdateSettingsView> {
                       obscureText: true,
                     ),
                     const SizedBox(height: 16),
-                  CustomButton(
-                    color: Colors.blue,
-                    text: 'Save',
-                    textColor: Colors.white,
-                    onPressed: handleSave,
-                  ),
-                  const SizedBox(height: 16),
-                  CustomButton(
-                    color: Colors.red,
-                    text: 'Delete Account',
-                    textColor: Colors.white,
-                    onPressed: () {
-                      displayModal(context,
-                        "Are you sure you want to delete your account?",
-                        onDeleteAccountModalConfirm,
-                        onCancel: onDeleteAccountModalCancel);
-                    },
-                    icon:  Icons.warning_amber_rounded,
-                  ),
+                    CustomButton(
+                      color: Colors.blue,
+                      text: 'Save',
+                      textColor: Colors.white,
+                      onPressed: handleSave,
+                    ),
+                    const SizedBox(height: 16),
+                    CustomButton(
+                      color: Colors.red,
+                      text: 'Delete Account',
+                      textColor: Colors.white,
+                      onPressed: () {
+                        displayModal(
+                            context,
+                            "Are you sure you want to delete your account?",
+                            onDeleteAccountModalConfirm,
+                            onCancel: onDeleteAccountModalCancel);
+                      },
+                      icon: Icons.warning_amber_rounded,
+                    ),
                   ],
                 ),
               ),
