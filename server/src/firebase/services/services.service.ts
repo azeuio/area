@@ -48,7 +48,6 @@ export class ServicesService {
     );
     const services = await this.findAll();
     const adminService = services?.['admin'];
-    console.log('service ', adminService);
 
     return Object.entries(services || {})
       .filter(

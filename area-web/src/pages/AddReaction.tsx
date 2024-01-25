@@ -74,7 +74,6 @@ function AddReactionView({
     const newInputValues = { ...editedOptions, [name]: verifiedValued };
     if (option.default !== undefined && newValue === '') {
       delete newInputValues[name];
-      console.log('default value', newInputValues);
     }
     setEditedOptions(newInputValues);
   };

@@ -110,8 +110,6 @@ function LinkReaction() {
                 logo={parent.service.logo}
                 text={parent.action.name}
                 onClick={() => {
-                  console.log('clicked');
-
                   navigate(
                     `/add-reaction/${boardid}/${parent.action.service_id}/${parentid}`,
                   );
